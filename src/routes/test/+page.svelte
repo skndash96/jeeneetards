@@ -48,7 +48,7 @@
 
 		let script = document.createElement('script');
 		script.src =
-			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML';
+			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.min.js?config=TeX-AMS-MML_HTMLorMML';
 		script.async = true;
 
 		document.head.append(script);
@@ -204,8 +204,6 @@
 <svelte:head>
 	<title>Test Interface</title>
 	<meta name="title" content="Test Interface" />
-
-	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 </svelte:head>
 
 <div class="container">
@@ -249,7 +247,6 @@
 							{qIdx}
 							{subIdx}
 							respond={practice ? validateResponse : answerResponse}
-							}
 						/>
 					{/each}
 				</div>
@@ -301,6 +298,7 @@
 
 	div.container {
 		position: relative;
+		overflow-x: scroll;
 	}
 
 	div.container > div:first-child {
@@ -347,10 +345,10 @@
 
 	div.stat {
 		position: fixed;
-		right: 0;
 		top: 3.5rem;
 		left: 0;
 		bottom: 0;
+		width: 100vw;
 		pointer-events: none;
 	}
 	div.stat > div {

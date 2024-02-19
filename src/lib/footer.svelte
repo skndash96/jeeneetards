@@ -6,7 +6,6 @@
     <p>
         Designed and developed by <a target="_blank" href="https://github.com/skndash96/"> a fellow Jeetard </a>
     </p>
-    <span> | </span>
     <p>
         For issues or PR, here's 
         <a target="_blank" href="https://github.com/skndash96/jeeneetards">
@@ -29,4 +28,7 @@
     footer a {
         color: var(--ter);
     }
+     footer p:last-child {
+        border-right: 2px solid var(--txt);
+     }
 </style>

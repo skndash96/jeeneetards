@@ -2,6 +2,10 @@
     let quote = "The impedement to action advances action, what stands in the way becomes the way.";
 </script>
 
+<svelte:head>
+    <title> JEENEETards | Home for Aspirants </title>
+</svelte:head>
+
 <div class="container">
     <div class="quote">
         <span>"</span>

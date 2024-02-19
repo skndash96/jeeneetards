@@ -34,14 +34,15 @@
     }
 }
 
+html {
+    transition: all ease-out 100ms;
+    scroll-behavior: smooth;
+}
+
 body {
-    overflow: hidden;
     font-family: Poppins;
     background: var(--bg);
     color: var(--txt);
-    transition: all ease-out 100ms;
-}
-body, .container, .content {
     scroll-behavior: smooth;
 }
 
