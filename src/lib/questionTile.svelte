@@ -1,5 +1,5 @@
 <script>
-    export let question, question_id, type, qIdx, subIdx, answerResponse;
+    export let question, question_id, type, qIdx, subIdx, respond;
 
 </script>
 
@@ -15,17 +15,18 @@
     <div class="options">
         {#if type == 'integer'}
             <input
+				name={question_id}
                 style="colspan: 2;"
                 type="integer"
                 placeholder="Answer here"
-                on:change={({ target }) => answerResponse(subIdx, qIdx, target)}
+                on:change={({ target }) => respond(subIdx, qIdx, target)}
             />
         {:else}
             {#each question.options as opt}
                 <button
                     name={question_id}
                     value={opt.identifier}
-                    on:click={({ target }) => answerResponse(subIdx, qIdx, target)}
+                    on:click={({ target }) => respond(subIdx, qIdx, target)}
                 >
                     <span>{opt.identifier}</span>
                     {@html opt.content}
@@ -37,7 +38,7 @@
 
 <style>
 	div.qTile {
-		padding: 2.5rem;
+		padding: 5rem .5rem 0 .5rem;
 	}
 	div.qTile .qno {
 		font-size: 1.25rem;
@@ -90,8 +91,10 @@
 	}
 	:global(div.options .correct) {
 		background: lightgreen !important;
+		color: black !important;
 	}
 	:global(div.options .wrong) {
 		background: lightcoral !important;
+		color: black !important;
 	}
 </style>

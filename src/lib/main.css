@@ -20,7 +20,7 @@
 :root.dark {
     --bg: #0d0d0d;
     --txt: #f2f2f2;
-    --elevate: #f2f2f244;
+    --elevate: #f2f2f233;
 }
 
 @media screen and (max-width: 556px) {
@@ -60,9 +60,11 @@ button {
     outline: none;
     border: none;
 }
+button.classic:disabled {
+    opacity: 0.3;
+}
 button.classic:disabled:hover {
     transform: scale(1);
-    opacity: 0.3;
 
 }
 input {
@@ -87,6 +89,7 @@ a.classic:hover, button.classic:hover {
 a:hover svg {
     fill: var(--sec);
 }
+
 svg {
     width: 1.2rem;
     aspect-ratio: 1;

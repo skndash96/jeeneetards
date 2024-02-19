@@ -301,11 +301,13 @@
 <style>
     div.container {
         padding: 3rem;
+		padding-top: 0;
+		max-width: var(--lg);
+		margin: 0 auto;
     }
 
 	div.index ol {
 		margin-left: 2rem;
-        margin-top: 2rem;
         color: var(--ter);
 	}
     div.index ol li {

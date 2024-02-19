@@ -10,8 +10,8 @@
 #topscroll {
     display: block;
     position: absolute;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: 4rem;
+    right: 4rem;
     background: var(--pri);
     color: white;
     padding: 1rem;

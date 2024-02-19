@@ -5,6 +5,7 @@
 
 	let metaId = $page.url.searchParams.get('metaId');
 	let title = $page.url.searchParams.get('title');
+	let practice = $page.url.searchParams.get('practice');
 
 	let menuOpen = false;
 
@@ -49,8 +50,33 @@
 	 * @param {EventTarget} target
 	 */
 
+	 function validateResponse(subIdx, qIdx, target) {
+		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
+		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
+
+		let { type, question: { correct_options, answer} } = subjects[subIdx].questions[qIdx];
+
+		if (type !== "integer" && (target.classList.contains("correct") || target.classList.contains("wrong"))) {
+			return target.classList.remove("correct", "wrong");
+		}
+
+		elems.forEach((el) => {
+			type === "mcqm"
+			? el.classList.remove('wrong')
+			: el.classList.remove("wrong", "correct");
+		});
+
+		console.log(type, target.value, answer, target.value === answer);
+
+		(
+			correct_options.includes(target.value)
+			|| target.value === answer
+		) ? target.classList.add("correct")
+		  : target.classList.add("wrong");
+	}
+
 	function answerResponse(subIdx, qIdx, target) {
-		let elems = document.querySelectorAll(`button[name="${target.name}"]`);
+		let elems = target.parentNode.querySelectorAll(`button[name="${target.name}"]`);
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
 		let prevRes = response[subIdx][qIdx];
@@ -178,11 +204,12 @@
 		...Loading
 	{:else}
 		<div>
-			<h3>
+			<h3 class="title">
 				{title}
 			</h3>
 
 			<div class="menu">
+
 				{#each subjects as sub, idx}
 					<button
 						class="classic"
@@ -193,18 +220,21 @@
 					</button>
 				{/each}
 
+				{#if !practice}
 				<button class="classic finish" on:click={finish}> FINISH </button>
+				{/if}
 			</div>
 
 			{#each subjects as sub, subIdx}
 				<div id={sub.title} class="qlist" class:visible={currentSub === subIdx}>
 					{#each sub.questions as { question, type, question_id }, qIdx}
-						<QuestionTile {question} {question_id} {type} {qIdx} {subIdx} {answerResponse} } />
+						<QuestionTile {question} {question_id} {type} {qIdx} {subIdx} respond={practice ? validateResponse : answerResponse} } />
 					{/each}
 				</div>
 			{/each}
 		</div>
 
+		{#if !practice}
 		<div class="stat" class:open={menuOpen}>
 			<div>
 				<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
@@ -238,23 +268,25 @@
 				</div>
 			</div>
 		</div>
+		{/if}
 	{/if}
 </div>
 
 <style>
-	:global(ul.menu a span) {
-		display: none !important;
+	:global(div#start h2.logo) {
+		display: none;
 	}
 
 	div.container {
 		position: relative;
-		overflow-x: hidden;
 	}
 	div.menu {
 		display: flex;
 		gap: 1rem;
 		margin-top: 2rem;
 		flex-wrap: wrap;
+		margin: auto;
+		width: fit-content;
 	}
 	div.menu button {
 		padding: 0.5rem 1rem;
@@ -268,35 +300,39 @@
 		transform: scale(0.95);
 	}
 
-	div.container div:first-child {
+	div.container > div:first-child {
 		padding: 2rem 1rem;
+		padding-top: 0;
 	}
+	div.container h3.title {
+		padding: 2rem;
+		text-align: center;
+	}
+
 	div.stat {
-		position: absolute;
+		position: fixed;
 		right: 0;
-		top: 0;
+		top: 3.5rem;
 		left: 0;
 		bottom: 0;
 		pointer-events: none;
 	}
 	div.stat > div {
+		width: 75vw;
+		max-width: 32rem;
 		margin-left: auto;
+		background: var(--pri);
 		color: white;
-		width: 60vw;
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
 		transform: translateX(100%);
 		transition: all ease-out 100ms;
-		background: var(--pri);
-		padding: 2rem;
+		padding: 0 0 2rem 1rem;
 	}
 	div.stat.open {
 		backdrop-filter: blur(4px);
+		pointer-events: initial;
 	}
 	div.stat.open > div {
-		transform: translateX(0);
+		transform: translateX(-2%);
 	}
 
 	div.stat button.palette {
@@ -304,10 +340,9 @@
 		font-weight: 600;
 		background: var(--pri);
 		padding: 0.5rem;
-		margin-left: -5rem;
-		transform: translateY(-1rem);
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 		pointer-events: initial;
+		transform: translate(-6rem, 1rem);
 	}
 
 	div.substat {
