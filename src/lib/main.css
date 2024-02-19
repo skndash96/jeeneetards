@@ -97,3 +97,17 @@ svg {
     fill: currentColor;
     color: inherit;
 }
+
+th {
+    background: none !important;
+}
+
+@keyframes slidein {
+    from {
+        padding-top: 2rem;
+    }
+
+    to {
+        padding-top: 0;
+    }
+}

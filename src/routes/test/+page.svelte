@@ -1,4 +1,5 @@
 <script>
+	// @ts-nocheck
 	import { page } from '$app/stores';
 	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
@@ -37,42 +38,47 @@
 		};
 
 		let script = document.createElement('script');
-		script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML';
+		script.src =
+			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML';
 		script.async = true;
 		document.head.append(script);
 
 		return;
 	});
 
-	/**
-	 * @param {number} subIdx
-	 * @param {number} qIdx
-	 * @param {EventTarget} target
-	 */
+	function appendIntAnswer(answer, el) {
+		let newEl = document.createElement('span');
+			newEl.classList.add('correct');
+			newEl.textContent = 'Answer: ' + answer;
 
-	 function validateResponse(subIdx, qIdx, target) {
+			el.parentElement.append(newEl);
+	}
+
+	function validateResponse(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
-		let { type, question: { correct_options, answer} } = subjects[subIdx].questions[qIdx];
+		let {
+			type,
+			question: { correct_options, answer }
+		} = subjects[subIdx].questions[qIdx];
 
-		if (type !== "integer" && (target.classList.contains("correct") || target.classList.contains("wrong"))) {
-			return target.classList.remove("correct", "wrong");
+		if (
+			type !== 'integer' &&
+			(target.classList.contains('correct') || target.classList.contains('wrong'))
+		) {
+			return target.classList.remove('correct', 'wrong');
 		}
 
 		elems.forEach((el) => {
-			type === "mcqm"
-			? el.classList.remove('wrong')
-			: el.classList.remove("wrong", "correct");
+			type === 'mcqm' ? el.classList.remove('wrong') : el.classList.remove('wrong', 'correct');
 		});
 
-		console.log(type, target.value, answer, target.value === answer);
-
-		(
-			correct_options.includes(target.value)
-			|| target.value === answer
-		) ? target.classList.add("correct")
-		  : target.classList.add("wrong");
+		correct_options.includes(target.value) || target.value === answer
+			? target.classList.add('correct')
+			: target.classList.add('wrong');
+		
+		if (type === 'integer') appendIntAnswer(answer, target)
 	}
 
 	function answerResponse(subIdx, qIdx, target) {
@@ -184,6 +190,8 @@
 							: opt.classList.add('wrong');
 					});
 				} else if (type === 'integer') {
+					appendIntAnswer(answer, opts[0]);
+
 					opts[0].value === answer
 						? opts[0].classList.add('correct')
 						: opts[0].classList.add('wrong');
@@ -196,11 +204,16 @@
 </script>
 
 <svelte:head>
+	<title>Test Interface</title>
+	<meta name="title" content="Test Interface" />
+
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 </svelte:head>
 
 <div class="container">
-	{#if typeof subjects !== 'object'}
+	{#if !metaId || !title}
+		BROKEN URL. <a href="/pyqs">Go to PYQs</a>
+	{:else if subjects.length === 0}
 		...Loading
 	{:else}
 		<div>
@@ -209,7 +222,6 @@
 			</h3>
 
 			<div class="menu">
-
 				{#each subjects as sub, idx}
 					<button
 						class="classic"
@@ -221,53 +233,61 @@
 				{/each}
 
 				{#if !practice}
-				<button class="classic finish" on:click={finish}> FINISH </button>
+					<button class="classic finish" on:click={finish}> FINISH </button>
 				{/if}
 			</div>
 
 			{#each subjects as sub, subIdx}
 				<div id={sub.title} class="qlist" class:visible={currentSub === subIdx}>
 					{#each sub.questions as { question, type, question_id }, qIdx}
-						<QuestionTile {question} {question_id} {type} {qIdx} {subIdx} respond={practice ? validateResponse : answerResponse} } />
+						<QuestionTile
+							{question}
+							{question_id}
+							{type}
+							{qIdx}
+							{subIdx}
+							respond={practice ? validateResponse : answerResponse}
+							}
+						/>
 					{/each}
 				</div>
 			{/each}
 		</div>
 
 		{#if !practice}
-		<div class="stat" class:open={menuOpen}>
-			<div>
-				<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
-					{#if menuOpen}
-						Close
-					{:else}
-						Open
-					{/if}
-				</button>
-
+			<div class="stat" class:open={menuOpen}>
 				<div>
-					{#each response as sub, subIdx}
-						<h3>{subjects[subIdx].title}</h3>
-						<div class="substat">
-							{#each sub as q, qIdx}
-								<a
-									style="pointer-events: initial;"
-									href={'#' + (subjects[subIdx].questions[qIdx].question_id || '')}
-									class="qstat"
-									class:tick={q !== null && q !== ''}
-									on:click={() => {
-										currentSub = subIdx;
-										menuOpen = false;
-									}}
-								>
-									{qIdx + 1}
-								</a>
-							{/each}
-						</div>
-					{/each}
+					<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
+						{#if menuOpen}
+							Close
+						{:else}
+							Open
+						{/if}
+					</button>
+
+					<div>
+						{#each response as sub, subIdx}
+							<h3>{subjects[subIdx].title}</h3>
+							<div class="substat">
+								{#each sub as q, qIdx}
+									<a
+										style="pointer-events: initial;"
+										href={'#' + (subjects[subIdx].questions[qIdx].question_id || '')}
+										class="qstat"
+										class:tick={q !== null && q !== ''}
+										on:click={() => {
+											currentSub = subIdx;
+											menuOpen = false;
+										}}
+									>
+										{qIdx + 1}
+									</a>
+								{/each}
+							</div>
+						{/each}
+					</div>
 				</div>
 			</div>
-		</div>
 		{/if}
 	{/if}
 </div>
@@ -383,15 +403,5 @@
 		animation-name: slidein;
 		animation-duration: 0.5s;
 		animation-iteration-count: 1;
-	}
-
-	@keyframes slidein {
-		from {
-			padding-top: 2rem;
-		}
-
-		to {
-			padding-top: 0;
-		}
 	}
 </style>

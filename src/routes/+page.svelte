@@ -1,5 +1,5 @@
-<script>
-let quote = "The impedement to action advances action, what stands in the way becomes the way.";
+<script> 
+    let quote = "The impedement to action advances action, what stands in the way becomes the way.";
 </script>
 
 <div class="container">

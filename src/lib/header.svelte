@@ -1,12 +1,12 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let darkmode = true;
+	let darkmode = false;
 
 	onMount(() => {
 		let theme = window.localStorage.getItem("theme");
 
-		if (theme === "dark") darkmode = false;
+		if (theme === "light") darkmode = true;
 		toggleDarkmode();
 	});
 

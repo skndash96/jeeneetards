@@ -1,4 +1,4 @@
-<script>
+<script>    
 	import '../lib/main.css';
 
 	import TopScroll from '$lib/topScroll.svelte';
@@ -16,13 +16,18 @@
     </div>
 
 	<slot />
+    
 	<Footer />
 </div>
 
 <style>
     div.container {
         height: 100vh;
-        overflow: scroll
+        overflow: scroll;
+    }
+    :global(div.container > div.container) {
+        animation: slidein 100ms 1;
+        min-height: 100vh;
     }
 
     div#start {

@@ -19,6 +19,11 @@
 	div.paper {
 		background: var(--elevate);
 		padding: 1rem;
+		letter-spacing: .1rem;
+	}
+
+	div.paper strong {
+		font-weight: 500;
 	}
 
 	div.actions {
@@ -28,7 +33,7 @@
 	}
 	div.actions > a {
 		color: var(--txt);
-		font-weight: 500;
+		font-weight: normal;
 		background: var(--elevate);
 		padding: .5rem;
 	}

@@ -89,12 +89,15 @@
 	:global(div.qlist.result button) {
 		border-width: 5px !important;
 	}
-	:global(div.options .correct) {
+	:global(div.qTile .correct) {
 		background: lightgreen !important;
 		color: black !important;
 	}
-	:global(div.options .wrong) {
+	:global(div.qTile .wrong) {
 		background: lightcoral !important;
 		color: black !important;
+	}
+	:global(div.qTile span.correct) {
+		padding: .5rem;
 	}
 </style>

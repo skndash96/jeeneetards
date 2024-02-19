@@ -3,6 +3,12 @@
 	import exams from '$lib/exams.json';
 </script>
 
+<svelte:head>
+	<title> Past Year Question Papers </title>
+	<meta name="title" content="Past Year Question Papers" />
+	<meta name="description" content="Collection of PYQs for you solve or write a test." />
+</svelte:head>
+
 <div class="container">
 	<h2>Index</h2>
 

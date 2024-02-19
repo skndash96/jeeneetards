@@ -270,6 +270,12 @@
 	};
 </script>
 
+<svelte:head>
+	<title> Digital Resources </title>
+	<meta name="title" content="Digital Resources" />
+	<meta name="description" content="A large Collection of Books, Tests, Notes, Playlist and whatsoever you would need to Rise as an Aspirant." />
+</svelte:head>
+
 <div class="container">
 	<div class="index">
 		<h3>INDEX</h3>
