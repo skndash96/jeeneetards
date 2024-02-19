@@ -1,25 +1,37 @@
 <script>
 	import { page } from '$app/stores';
+	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
 
 	let metaId = $page.url.searchParams.get('metaId');
 	let title = $page.url.searchParams.get('title');
 
+	let menuOpen = true;
+
 	let currentSub = 0;
 
-	/**
-	 * @type {{ [x: string]: { [x: string]: any; }; }}
-	 */
-	let subjects, state;
+	let subjects = [], response = [];
 
 	onMount(async () => {
-		let response = await fetch(`/pyqs/${metaId}.json`);
-		subjects = await response.json();
+		let result = await fetch(`/pyqs/${metaId}.json`);
+		subjects = await result.json();
 
-		state = subjects.map((sub) => new Array(sub.questions.length).fill(null));
+		response = subjects.map((/** @type {{ questions: string | any[]; }} */ sub) =>
+			new Array(sub.questions.length).fill(null)
+		);
+
+		return;
 	});
 
-	function answerState(subIdx, qIdx, target) {
+	/**
+	 * @param {number} subIdx
+	 * @param {number} qIdx
+	 * @param {EventTarget} target
+	 */
+
+	 $: console.log(response);
+
+	function answerResponse(subIdx, qIdx, target) {
 		target.classList.remove('selected');
 
 		let elems = document.querySelectorAll(`button[name="${target.name}"]`);
@@ -28,16 +40,16 @@
 			el.classList.remove('selected');
 		});
 
-		if (state[subIdx][qIdx] === target.value) {
-			state[subIdx][qIdx] = null;
+		if (response[subIdx][qIdx] === target.value) {
+			response[subIdx][qIdx] = null;
 		} else {
-			state[subIdx][qIdx] = target.value;
+			response[subIdx][qIdx] = target.value;
 			target.value !== '' && target.classList.add('selected');
 		}
 	}
 
 	function finish() {
-		window.confirm("Confirm Finish Test?");
+		window.confirm('Confirm Finish Test?');
 	}
 </script>
 
@@ -67,73 +79,64 @@
 </svelte:head>
 
 <div class="container">
-	{#if subjects === undefined}
+	{#if typeof(subjects) !== "object"}
 		...Loading
 	{:else}
-		<h3>
-			{title}
-		</h3>
-
-		<div class="menu">
-			<div class="stat">
-				{#each state as sub}
-					<div class="substat">
-						{#each sub as q, q_idx}
-							<div class="qstat" class:tick={q !== null && q !== ""}> {q_idx+1} </div>
-						{/each}
-					</div>
+		<div>
+			<h3>
+				{title}
+			</h3>
+			<div class="menu">
+				{#each subjects as sub, idx}
+					<button
+						class="classic"
+						class:active={currentSub === idx}
+						on:click={() => (currentSub = idx)}
+					>
+						{sub.title}
+					</button>
 				{/each}
+
+				<button class="classic finish" on:click={finish}> FINISH </button>
 			</div>
 
-			{#each subjects as sub, idx}
-				<button
-					class="classic"
-					class:active={currentSub === idx}
-					on:click={() => (currentSub = idx)}
-				>
-					{sub.title}
-				</button>
+
+			{#each subjects as sub, subIdx}
+				<div id={sub.title} class="qlist" class:hidden={currentSub !== subIdx}>
+					{#each sub.questions as { question, type, question_id }, qIdx}
+						<QuestionTile {question} {question_id} {type} {qIdx} {subIdx} {answerResponse} } />
+					{/each}
+				</div>
 			{/each}
-			
-			<button class="classic finish" on:click={finish}> FINISH </button>
 		</div>
 
-		<hr />
+		<div class="stat" class:open={ menuOpen }>
+		<div>
+			
+			<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
+				{#if menuOpen} Close {:else} Open {/if}
+			</button>
 
-		{#each subjects as sub, subIdx}
-			<div id={sub.title} class="qlist" class:hidden={currentSub !== subIdx}>
-				{#each sub.questions as { question, type, question_id }, qIdx}
-					<div class="qTile">
-						<strong class="qno">Question {qIdx + 1}</strong>
-						<p>
-							{@html question.content}
-						</p>
-
-						<div class="options">
-							{#if type == 'integer'}
-								<input
-									style="colspan: 2;"
-									type="integer"
-									placeholder="Answer here"
-									on:change={({ target }) => answerState(subIdx, qIdx, target)}
-								/>
-							{:else}
-								{#each question.options as opt}
-									<button
-										name={question_id}
-										value={opt.identifier}
-										on:click={({ target }) => answerState(subIdx, qIdx, target)}
-									>
-										<span>{opt.identifier}</span>
-										{@html opt.content}
-									</button>
-								{/each}
-							{/if}
-						</div>
-					</div>
-				{/each}
+		<div>
+			{#each response as sub, subIdx}
+				<h3>{subjects[subIdx].title}</h3>
+				<div class="substat">
+					{#each sub as q, qIdx}
+						<a
+							style="pointer-events: initial;"
+							href={'#' + (subjects[subIdx].questions[qIdx].question_id || '')}
+							class="qstat"
+							class:tick={q !== null && q !== ''}
+							on:click={() => (currentSub = subIdx) && (menuOpen = false)}
+						>
+							{qIdx + 1}
+						</a>
+					{/each}
+				</div>
+			{/each}
 			</div>
-		{/each}
+			</div>
+		</div>
 	{/if}
 
 	<!-- <script>
@@ -142,19 +145,18 @@
 </div>
 
 <style>
-	div.container {
-		padding: 2rem;
-		min-height: 100vh;
+	:global(ul.menu a span) {
+		display: none !important;
 	}
-
+	
+	div.container {
+		position: relative;
+	}
 	div.menu {
-		display: grid;
-		grid-template-columns: 3;
-		grid-template-rows: 2;
+		display: flex;
 		gap: 1rem;
 		margin-top: 2rem;
-		max-width: var(--md);
-		margin-right: auto;
+		flex-wrap: wrap;
 	}
 	div.menu button {
 		padding: 0.5rem 1rem;
@@ -168,29 +170,64 @@
 		transform: scale(0.95);
 	}
 
-	div.stat {
-		column-span: 3;
-		grid-column-start: 1;
-		grid-column-end: 4;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
+	div.container div:first-child {
+		padding: 2rem 1rem;
 	}
+	div.stat {
+		position: absolute;
+		right: 0;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		pointer-events: none;
+	}
+	div.stat > div {
+		margin-left: auto;
+		color: white;
+		width: 60vw;
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		transform: translateX(100%);
+		transition: all ease-out 100ms;
+		background: var(--pri);
+		padding: 2rem;
+	}
+	div.stat.open {
+		backdrop-filter: blur(4px);
+	}
+	div.stat.open > div {
+		transform: translateX(0);
+	}
+
+	div.stat button.palette {
+		color: white;
+		font-weight: 600;
+		background: var(--pri);
+		padding: .5rem;
+		margin-left: -5rem;
+		box-shadow: 3px 3px 5px rgba(0,0,0,.3);
+		pointer-events: initial;
+	}
+
 	div.substat {
+		margin-bottom: 1rem;
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		gap: .2rem;
+		gap: 0.2rem;
 	}
-	div.qstat {
+	a.qstat {
+		display: block;
 		width: 2rem;
 		height: 2rem;
 		background: grey;
 		color: white;
 		text-align: center;
 	}
-	div.menu div.qstat.tick {
-		background: green;
+	:global(a.qstat.tick) {
+		background: green !important;
 	}
 
 	div.menu button.finish {
@@ -198,61 +235,6 @@
 		color: var(--pri);
 		border: 2px solid var(--txt);
 		font-weight: bold;
-		column-span: 2;
-		grid-column-start: 2;
-		grid-column-end: 3;
-	}
-
-	hr {
-		margin: 1rem 0 2rem 0;
-		max-width: var(--md);
-		border-color: var(--txt);
-	}
-	div.qTile {
-		margin-top: 1rem;
-		padding: 1rem;
-	}
-	div.qTile .qno {
-		font-size: 1.25rem;
-	}
-	div.options {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		grid-template-rows: 1fr 1fr;
-		place-items: center;
-	}
-	div.options button {
-		border: 2px solid var(--elevate);
-		justify-self: stretch;
-		align-self: stretch;
-		margin: 0.5rem;
-		padding: 0.5rem;
-		color: var(--txt);
-		position: relative;
-	}
-	div.options button::after {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
-	div.options button:hover,
-	div.options input {
-		background: var(--elevate);
-	}
-
-	div.options input {
-		width: 100%;
-		margin-top: 1rem;
-		padding: 0.5rem;
-		color: var(--txt);
-	}
-
-	div.options :global(button.selected),
-	div.options :global(input.selected) {
-		border: 2px solid var(--ter);
 	}
 
 	div.qlist.hidden {

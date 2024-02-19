@@ -2,7 +2,6 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    transition: all ease-out 100ms;
 }
 
 :root {
@@ -13,7 +12,7 @@
     --pri: #034AA6;
     --sec: #3D90D9;
     --ter: #427ae9;
-
+    
     --sm: 556px;
     --md: 728px;
     --lg: 996px;
@@ -40,6 +39,7 @@ body {
     font-family: Poppins;
     background: var(--bg);
     color: var(--txt);
+    transition: all ease-out 100ms;
 }
 body, .container, .content {
     scroll-behavior: smooth;
