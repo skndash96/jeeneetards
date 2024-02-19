@@ -1,10 +1,20 @@
 <script>
-	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
-	let darkmode = false;
+	let darkmode = true;
 
-	$: if (browser) {
+	onMount(() => {
+		let theme = window.localStorage.getItem("theme");
+
+		if (theme === "dark") darkmode = false;
+		toggleDarkmode();
+	});
+
+	function toggleDarkmode() {
 		const body = document.documentElement;
+		darkmode = !darkmode;
+
+		window.localStorage.setItem("theme", darkmode ? "dark" : "light");
 
 		darkmode ? body.classList.add('dark') : body.classList.remove('dark');
 	}
@@ -58,7 +68,7 @@
 			>
 			<span>PYQs</span>
 		</a>
-		<button class="classic" on:click={() => (darkmode = !darkmode)}>
+		<button class="classic" on:click={toggleDarkmode}>
 			<span>
 				{#if darkmode}
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
