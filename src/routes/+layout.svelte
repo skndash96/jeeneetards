@@ -28,6 +28,7 @@
 <style>
     div.container {
         height: 100vh;
+        height: 100dvh;
         display: flex;
         flex-direction: row;
         align-items: stretch;
