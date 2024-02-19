@@ -4,7 +4,10 @@
 </script>
 
 <div id={question_id} class="qTile">
-    <strong class="qno">Question {qIdx + 1}</strong>
+    <strong class="qno">
+		Question {qIdx + 1}
+		{#if type === "mcqm"} <span style="margin-left: 1rem; font-size: 0.8rem; opacity: 0.8;"> (Multiple ans) </span> {/if}
+	</strong>
     <p>
         {@html question.content}
     </p>
@@ -77,5 +80,18 @@
 	div.options :global(button.selected),
 	div.options :global(input.selected) {
 		border: 2px solid var(--ter);
+	}
+
+	:global(div.qlist.result .selected) {
+		border-width: 5px !important;
+	}
+	:global(div.qlist.result button) {
+		border-width: 5px !important;
+	}
+	:global(div.options .correct) {
+		background: lightgreen;
+	}
+	:global(div.options .wrong) {
+		background: lightcoral;
 	}
 </style>
