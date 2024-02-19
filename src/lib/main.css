@@ -60,6 +60,11 @@ button {
     outline: none;
     border: none;
 }
+button.classic:disabled:hover {
+    transform: scale(1);
+    opacity: 0.3;
+
+}
 input {
     border: none;
     outline: none;

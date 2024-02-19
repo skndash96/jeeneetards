@@ -89,9 +89,9 @@
 		border-width: 5px !important;
 	}
 	:global(div.options .correct) {
-		background: lightgreen;
+		background: lightgreen !important;
 	}
 	:global(div.options .wrong) {
-		background: lightcoral;
+		background: lightcoral !important;
 	}
 </style>
