@@ -23,11 +23,13 @@
 <style>
     div.container {
         height: 100vh;
+        height: 100dvh;
         overflow: scroll;
     }
     :global(div.container > div.container) {
         animation: slidein 100ms 1;
         min-height: 100vh;
+        height: 100dvh;
     }
 
     div#start {

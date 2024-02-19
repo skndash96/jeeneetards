@@ -4,6 +4,8 @@
 	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
 
+	let loaded = false;
+
 	let metaId = $page.url.searchParams.get('metaId');
 	let title = $page.url.searchParams.get('title');
 	let practice = $page.url.searchParams.get('practice');
@@ -34,6 +36,13 @@
 			},
 			svg: {
 				fontCache: 'global'
+			},
+			startup: {
+				pageReady() {
+					return MathJax.startup.defaultPageReady().then(() => {
+						loaded = true;
+					});
+				}
 			}
 		};
 
@@ -41,6 +50,7 @@
 		script.src =
 			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js?config=TeX-AMS-MML_HTMLorMML';
 		script.async = true;
+
 		document.head.append(script);
 
 		return;
@@ -48,27 +58,19 @@
 
 	function appendIntAnswer(answer, el) {
 		let newEl = document.createElement('span');
-			newEl.classList.add('correct');
-			newEl.textContent = 'Answer: ' + answer;
+		newEl.classList.add('correct');
+		newEl.textContent = 'Answer: ' + answer;
 
-			el.parentElement.append(newEl);
+		el.parentElement.append(newEl);
 	}
 
 	function validateResponse(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
-		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
 		let {
 			type,
 			question: { correct_options, answer }
 		} = subjects[subIdx].questions[qIdx];
-
-		if (
-			type !== 'integer' &&
-			(target.classList.contains('correct') || target.classList.contains('wrong'))
-		) {
-			return target.classList.remove('correct', 'wrong');
-		}
 
 		elems.forEach((el) => {
 			type === 'mcqm' ? el.classList.remove('wrong') : el.classList.remove('wrong', 'correct');
@@ -77,12 +79,13 @@
 		correct_options.includes(target.value) || target.value === answer
 			? target.classList.add('correct')
 			: target.classList.add('wrong');
-		
-		if (type === 'integer') appendIntAnswer(answer, target)
+
+		type === 'integer' && appendIntAnswer(answer, target);
 	}
 
 	function answerResponse(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`button[name="${target.name}"]`);
+
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
 		let prevRes = response[subIdx][qIdx];
@@ -148,7 +151,7 @@
 										? q.length === 2
 											? 4
 											: q.length
-										: q.length !== 0
+										: q.length === 1
 											? 4
 											: 0;
 					}
@@ -175,31 +178,26 @@
 
 			sub.questions.forEach(({ type, question: { correct_options, answer } }, qIdx) => {
 				let qEl = subEl.children[qIdx];
-				let opts = qEl.querySelectorAll('.selected');
+				let opts = qEl.querySelectorAll('div.options > *');
 
 				if (!opts.length) return;
 
-				if (type === 'mcq') {
-					opts[0].value === correct_options[0]
-						? opts[0].classList.add('correct')
-						: opts[0].classList.add('wrong');
-				} else if (type === 'mcqm') {
-					opts.forEach((opt) => {
-						correct_options.includes(opt.value)
-							? opt.classList.add('correct')
-							: opt.classList.add('wrong');
-					});
-				} else if (type === 'integer') {
-					appendIntAnswer(answer, opts[0]);
+				opts.forEach((opt) => {
+					let selected = opt.classList.contains('selected');
 
-					opts[0].value === answer
-						? opts[0].classList.add('correct')
-						: opts[0].classList.add('wrong');
-				}
+					if (correct_options.includes(opt.value) || opt.value === answer) {
+						opt.classList.add('pcorrect');
+						selected && opt.classList.add('correct');
+					} else if (selected) {
+						opt.classList.add('wrong');
+					}
+				});
+
+				type === 'integer' && appendIntAnswer(answer, opts[0]);
 			});
 		});
 
-		alert(`You scored ${total}/${max}. Proceed to check the answers.`);
+		document.getElementById('score').textContent = `You scored ${total}/${max}`;
 	}
 </script>
 
@@ -213,13 +211,17 @@
 <div class="container">
 	{#if !metaId || !title}
 		BROKEN URL. <a href="/pyqs">Go to PYQs</a>
-	{:else if subjects.length === 0}
-		...Loading
 	{:else}
-		<div>
+		{#if !loaded}
+			...Loading
+		{/if}
+
+		<div class:visible={loaded}>
 			<h3 class="title">
 				{title}
 			</h3>
+
+			<p id="score"></p>
 
 			<div class="menu">
 				{#each subjects as sub, idx}
@@ -300,6 +302,29 @@
 	div.container {
 		position: relative;
 	}
+
+	div.container > div:first-child {
+		padding: 2rem 1rem;
+		padding-top: 0;
+		visibility: hidden;
+	}
+	div.container > div.visible:first-child {
+		visibility: visible;
+	}
+
+	div.container h3.title {
+		padding: 2rem;
+		text-align: center;
+	}
+
+	p#score {
+		font-size: 1.2rem;
+		font-weight: 500;
+		margin-bottom: 1rem;
+		width: fit-content;
+		background: var(--highlight);
+	}
+
 	div.menu {
 		display: flex;
 		gap: 1rem;
@@ -318,15 +343,6 @@
 	div.menu button.active {
 		background: var(--pri);
 		transform: scale(0.95);
-	}
-
-	div.container > div:first-child {
-		padding: 2rem 1rem;
-		padding-top: 0;
-	}
-	div.container h3.title {
-		padding: 2rem;
-		text-align: center;
 	}
 
 	div.stat {
@@ -352,7 +368,7 @@
 		pointer-events: initial;
 	}
 	div.stat.open > div {
-		transform: translateX(-2%);
+		transform: translateX(-5%);
 	}
 
 	div.stat button.palette {

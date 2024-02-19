@@ -93,6 +93,9 @@
 		background: lightgreen !important;
 		color: black !important;
 	}
+	:global(div.qTile button.pcorrect) {
+		border: 3px solid lightgreen !important;
+	}
 	:global(div.qTile .wrong) {
 		background: lightcoral !important;
 		color: black !important;
