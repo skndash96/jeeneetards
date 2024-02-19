@@ -143,7 +143,7 @@ let quote = "The impedement to action advances action, what stands in the way be
     }
     .cards > div {
         padding: 1rem;
-        border: 1px solid white;
+        border: 1px solid var(--txt);
         max-width: 16rem;
         margin: 0 auto;
     }

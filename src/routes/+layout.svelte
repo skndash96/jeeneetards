@@ -30,7 +30,7 @@
         height: 100vh;
         display: flex;
         flex-direction: row;
-        width: 100vw;
+        align-items: stretch;
     }
     
     div.content {
