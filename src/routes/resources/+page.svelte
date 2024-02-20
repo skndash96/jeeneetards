@@ -307,7 +307,6 @@
 <style>
     div.container {
         padding: 3rem;
-		padding-top: 0;
 		max-width: var(--lg);
 		margin: 0 auto;
     }

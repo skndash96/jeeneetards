@@ -84,7 +84,7 @@
 	}
 
 	function answerResponse(subIdx, qIdx, target) {
-		let elems = target.parentNode.querySelectorAll(`button[name="${target.name}"]`);
+		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
@@ -106,8 +106,11 @@
 				prevRes.has(el.value) && el.classList.add('selected');
 			});
 		} else {
+			console.log("#", target.value, "#", target.value !== "");
+
 			response[subIdx][qIdx] = target.value;
-			target.value !== '' && target.classList.add('selected');
+			
+			if (target.value !== "") target.classList.add('selected');
 		}
 	}
 
@@ -137,7 +140,7 @@
 				} else if (type === 'mcqm') {
 					q = Array.from(q);
 
-					if (q.some((opt) => !correct_options.includes(q))) {
+					if (q.some((opt) => !correct_options.includes(opt))) {
 						total -= negMarks;
 					} else {
 						total +=
@@ -255,36 +258,34 @@
 
 		{#if !practice}
 			<div class="stat" class:open={menuOpen}>
-				<div class="palette">
-					<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
-						{#if menuOpen}
-							<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
-						{:else}
-							&gt; Questions
-						{/if}
-					</button>
+				<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
+					{#if menuOpen}
+						<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
+					{:else}
+						<span> >Palette </span>
+					{/if}
+				</button>
 
-					<div>
-						{#each response as sub, subIdx}
-							<h3>{subjects[subIdx].title}</h3>
-							<div class="substat">
-								{#each sub as q, qIdx}
-									<a
-										style="pointer-events: initial;"
-										href={'#' + (subjects[subIdx].questions[qIdx].question_id || '')}
-										class="qstat"
-										class:tick={q !== null && q !== ''}
-										on:click={() => {
-											currentSub = subIdx;
-											menuOpen = false;
-										}}
-									>
-										{qIdx + 1}
-									</a>
-								{/each}
-							</div>
-						{/each}
-					</div>
+				<div class="palette">
+					{#each response as sub, subIdx}
+						<h3>{subjects[subIdx].title}</h3>
+						<div class="substat">
+							{#each sub as q, qIdx}
+								<a
+									style="pointer-events: initial;"
+									href={'#' + (subjects[subIdx].questions[qIdx].question_id || '')}
+									class="qstat"
+									class:tick={q !== null && q !== ''}
+									on:click={() => {
+										currentSub = subIdx;
+										menuOpen = false;
+									}}
+								>
+									{qIdx + 1}
+								</a>
+							{/each}
+						</div>
+					{/each}
 				</div>
 			</div>
 		{/if}
@@ -320,6 +321,7 @@
 		font-weight: 500;
 		margin-bottom: 1rem;
 		width: fit-content;
+		margin: auto;
 		background: var(--highlight);
 	}
 
@@ -349,46 +351,45 @@
 		top: 0;
 		left: 0;
 		bottom: 0;
-		pointer-events: none;
 		z-index: 1000;
+		transform: translateX(100%);
+		background-color: #000000aa;
+		transition: all ease-out 100ms;
 	}
 	div.stat.open {
-		backdrop-filter: blur(4px);
+		/* backdrop-filter: blur(4px); */
 		pointer-events: initial;
+		transform: translateX(0);
 	}
 	div.stat > div.palette {
 		width: 75vw;
 		max-width: 32rem;
 		margin-left: auto;
-		padding: 0 0 2rem 1rem;
+		padding: 2rem .5rem 2rem 1rem;
 		color: white;
 		background: var(--pri);
-		transform: translateX(100%);
-		transition: all ease-out 100ms;
-		box-shadow: inset 0px 2px 10px rgba(0,0,0,5);
-	}
-	div.stat.open > div {
-		transform: translateX(0);
-	}
-	div.stat > div.palette > div {
+		box-shadow: inset 0px 2px 10px rgba(0, 0, 0, 5);
 		max-height: 80vh;
 		overflow-y: scroll;
 		pointer-events: initial;
-		position: relative;
 	}
 
 	div.stat button.palette {
 		color: white;
-		font-weight: 600;
 		background: var(--pri);
 		padding: 0.5rem;
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-		transform: translate(-10rem, 7rem);
+		font-weight: 600;
+		position: absolute;
+		top: 6rem;
+		right: 0;
+		margin-right: 105vw;
 		pointer-events: initial;
-		transition: all ease-out 200ms;
+		cursor: pointer;
 	}
 	div.stat.open button.palette {
-		transform: translate(-5rem, 7rem) scale(1.5);
+		margin-right: min(80vw, 35rem);
+		transform: scale(1.5);
 	}
 
 	div.substat {

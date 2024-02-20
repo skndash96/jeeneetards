@@ -24,7 +24,6 @@
 }
 
 html {
-    transition: all ease-out 100ms;
     scroll-behavior: smooth;
 }
 

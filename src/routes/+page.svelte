@@ -66,6 +66,8 @@
         margin: auto;
         font-weight: 600;
         padding: 2rem;
+    }
+    div.quote span {
         font-size: 1.3rem;
     }
     div.quote span:nth-of-type(odd) {

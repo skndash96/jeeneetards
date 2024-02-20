@@ -69,7 +69,6 @@
 <style>
 	div.container {
 		padding: 2rem;
-		padding-top: 0;
 		max-width: var(--lg);
 		margin: 0 auto;
 	}
