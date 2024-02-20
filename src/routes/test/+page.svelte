@@ -255,12 +255,12 @@
 
 		{#if !practice}
 			<div class="stat" class:open={menuOpen}>
-				<div>
+				<div class="palette">
 					<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
 						{#if menuOpen}
-							Close
+							<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
 						{:else}
-							Open
+							&gt; Questions
 						{/if}
 					</button>
 
@@ -345,28 +345,36 @@
 
 	div.stat {
 		position: fixed;
-		top: 3.5rem;
+		width: 100vw;
+		top: 0;
 		left: 0;
 		bottom: 0;
-		width: 100vw;
 		pointer-events: none;
-	}
-	div.stat > div {
-		width: 75vw;
-		max-width: 32rem;
-		margin-left: auto;
-		background: var(--pri);
-		color: white;
-		transform: translateX(100%);
-		transition: all ease-out 100ms;
-		padding: 0 0 2rem 1rem;
+		z-index: 1000;
 	}
 	div.stat.open {
 		backdrop-filter: blur(4px);
 		pointer-events: initial;
 	}
+	div.stat > div.palette {
+		width: 75vw;
+		max-width: 32rem;
+		margin-left: auto;
+		padding: 0 0 2rem 1rem;
+		color: white;
+		background: var(--pri);
+		transform: translateX(100%);
+		transition: all ease-out 100ms;
+		box-shadow: inset 0px 2px 10px rgba(0,0,0,5);
+	}
 	div.stat.open > div {
-		transform: translateX(-5%);
+		transform: translateX(0);
+	}
+	div.stat > div.palette > div {
+		max-height: 80vh;
+		overflow-y: scroll;
+		pointer-events: initial;
+		position: relative;
 	}
 
 	div.stat button.palette {
@@ -375,8 +383,12 @@
 		background: var(--pri);
 		padding: 0.5rem;
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
+		transform: translate(-10rem, 7rem);
 		pointer-events: initial;
-		transform: translate(-6rem, 1rem);
+		transition: all ease-out 200ms;
+	}
+	div.stat.open button.palette {
+		transform: translate(-5rem, 7rem) scale(1.5);
 	}
 
 	div.substat {

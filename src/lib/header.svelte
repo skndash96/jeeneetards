@@ -27,7 +27,7 @@
 				width="50px"
 				height="50px"
 				alt="icon"
-				src="https://styles.redditmedia.com/t5_311ttu/styles/communityIcon_j5nctdyq50rb1.jpg?width=256&format=pjpg&s=d3c60085835254bbf6bef6c16c79fe4848081df6"
+				src="/logo.jpg"
 			/>
 		</div>
 		<h2 class="heading">
@@ -70,6 +70,7 @@
 		</a>
 		<button class="classic" on:click={toggleDarkmode}>
 			<span>
+				Theme
 				{#if darkmode}
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"
 						><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
@@ -131,18 +132,23 @@
 		gap: 0.5rem;
 		align-items: center;
 	}
-	@media (max-width: 728px) {
-		header h2.heading {
-			display: none;
+	
+	@media (max-width: 400px) {
+		div.menu span {
+			font-size: .8rem;
 		}
 	}
-	@media (max-width: 556px) {
-		header div.menu a span {
+	@media (max-width: 656px) {
+		header div.menu a svg {
 			display: none;
+		}
+		header {
+			flex-direction: column;
 		}
 	}
 
 	header button {
 		color: var(--txt);
+		margin-top: -.25rem;
 	}
 </style>

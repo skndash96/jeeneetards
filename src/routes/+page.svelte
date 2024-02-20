@@ -30,8 +30,6 @@
             </div>
         </div>
 
-        <hr>
-
         <p>Welcome to our Subreddit dedicated to India's beloved entrance exams, JEE and NEET. Whether you're seeking serious guidance or looking for some lighthearted shitposting, you'll find everything related to JEE and NEET here.</p>
         
         <section class="cards lg">
@@ -115,23 +113,8 @@
         color: var(--sec);
     }
 
-    section.about hr {
-        border: none;
-        margin: 0 auto 2rem auto;
-        width: fit-content;
-        max-width: 50vw;
-    }
-    
-    section.about hr::after{
-        content: '∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿∿';
-        /* Ratio -> font-size/letter-spacing = 6.25 */
-        letter-spacing: calc(-2rem/6.25);
-        font-size: 2rem;
-        opacity: .75;
-        transform: scale(0.5);
-    }
-
     section.about p {
+        padding: 2rem;
         max-width: 32rem;
         margin: 0 auto;
         font-weight: 400;

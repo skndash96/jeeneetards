@@ -11,7 +11,7 @@
     --highlight: #ffff0033;
     --pri: #034AA6;
     --sec: #3D90D9;
-    --ter: #427ae9;
+    --ter: rgb(0, 149, 255);
     
     --sm: 556px;
     --md: 728px;
@@ -21,17 +21,6 @@
     --bg: #0d0d0d;
     --txt: #f2f2f2;
     --elevate: #f2f2f233;
-}
-
-@media screen and (max-width: 556px) {
-    html {
-        font-size: 20px;
-    }
-}
-@media screen and (max-width: 728px) {
-    html {
-        font-size: 14px;
-    }
 }
 
 html {
@@ -44,6 +33,17 @@ body {
     background: var(--bg);
     color: var(--txt);
     scroll-behavior: smooth;
+}
+
+body {
+    font-size: calc(15px + 0.390625vw);
+}
+h1 { font-size: 1.8rem; }
+h2 { font-size: 1.5rem; }
+h3 { font-size: 1.3rem; }
+h4 { font-size: 1.2rem; }
+span, p, strong, button, a, input, li {
+    font-size: 1rem;
 }
 
 section {

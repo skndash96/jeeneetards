@@ -11,9 +11,7 @@
 
 	<Header />
 
-	<div id="start">
-        <h2 class="logo"> r/JEENEETards </h2>
-    </div>
+	<div id="start"></div>
 
 	<slot />
     
@@ -22,19 +20,14 @@
 
 <style>
     :global(div.container > div.container) {
-        animation: slidein 100ms 1;
+        padding-top: 2rem;
+        /* animation: slidein 100ms 1; */
     }
 
     div#start {
-        padding-top: 5rem;
+        padding-top: 7rem;
         width: fit-content;
         margin: 0 auto;
-        margin-top: -3rem;
-    }
-
-    @media (min-width: 728px) {
-        div#start h2 {
-            display: none;
-        }
+        margin-top: -7rem;
     }
 </style>

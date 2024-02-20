@@ -38,7 +38,8 @@
 
 <style>
 	div.qTile {
-		padding: 5rem .5rem 0 .5rem;
+		padding: 10rem .5rem 0 .5rem;
+		margin-top: -5rem;
 	}
 	div.qTile .qno {
 		font-size: 1.25rem;
