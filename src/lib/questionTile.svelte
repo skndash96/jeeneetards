@@ -51,18 +51,8 @@
 		grid-template-rows: 1fr 1fr;
 		place-items: center;
 	}
-	div.options button {
-		border: 2px solid var(--elevate);
-		justify-self: stretch;
-		align-self: stretch;
-		margin: 0.5rem;
-		padding: 0.5rem;
-		color: var(--txt);
-		position: relative;
-		display: flex;
-		align-items: center;
-		gap: .5rem;
-	}
+
+	
 	div.options button::after {
 		content: '';
 		position: absolute;
@@ -72,18 +62,33 @@
 		bottom: 0;
 		cursor: pointer;
 	}
-	div.options button:hover,
-	div.options input {
-		background: var(--elevate);
-		width: 100%;
-		margin-top: 1rem;
+
+	div.options button {
+		justify-self: stretch;
+		align-self: stretch;
+		margin: 0.5rem;
 		padding: 0.5rem;
 		color: var(--txt);
+		position: relative;
+		display: flex;
+		align-items: center;
+		gap: .5rem;
+		border: 2px solid var(--elevate);
+	}
+	div.options button:hover {
+		background: var(--elevate);
+	}
+	div.options input {
+		background: var(--elevate);
+		color: var(--txt);
+		border: 1px solid var(--elevate);
+		padding: 0.5rem;
+		margin-top: 1rem;
 	}
 	div.options input:focus {
 		border: 1px solid white;
 	}
-
+	
 	div.options :global(button.selected),
 	div.options :global(input.selected) {
 		border: 2px solid var(--ter);

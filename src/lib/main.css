@@ -65,7 +65,6 @@ button.classic:disabled {
 }
 button.classic:disabled:hover {
     transform: scale(1);
-
 }
 input {
     border: none;
