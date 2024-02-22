@@ -1,4 +1,74 @@
 <script>
+	/*
+	{
+		title: "Aakash 2014 JEE Mains Test (8 Papers)",
+		link: "https://drive.google.com/drive/folders/1wKgF2EKlX8RjAL4EOUxDrW_1nkScHJsF"
+	}
+	{
+		title: "Aakash 2014 JEE Advanced Test (6 Papers)",
+		link: "https://drive.google.com/drive/folders/1odmwXVH-Gp4BjDNQbw4CuyINR3Z18EhZ"
+	}
+	{
+		title: "Allen 2022-23 JEE (Mains+Adv) Tests (16 Papers)",
+		link: "https://drive.google.com/drive/folders/1Edx3szC0nwPDYO5d96o8pRZBoyMKWZCC"
+	}
+	{
+		title: "FIITJEE 2013-20 AITS Papers",
+		link: "https://drive.google.com/drive/folders/1gXrzoRLMnRR-hx5Vm4SS0ELBoQaRbw2J"
+	}
+	{
+		title: "Motion 2023 JEE (Mains+Adv) Tests",
+		link: "https://drive.google.com/drive/folders/1p3u76nz3TmSu3SizowWym5yAArKS_S-4"
+	}
+	{
+		title: "Resonance 2018 Full Mock Test",
+		link: "https://drive.google.com/drive/folders/1K3TIp165l962qdZQ_jftQ4TYqMZX7lfy"
+	}
+	{
+		title: "Resonance 2022 DPPs and Revision Plans",
+		link: "https://drive.google.com/drive/folders/1XAv9VpXeOKu9cnIxJST4BXP4yMXz7DwQ"
+	}
+	{
+		title: "FIITJEE 2019 AITS",
+		link: "https://drive.google.com/drive/folders/1E9khyePr4K_9PEP82XmN0I11_CiNRnlU"
+	}
+	{
+		title: "FIITJEE Grand Master Package",
+		link: [
+			"https://drive.google.com/file/d/13LJ95thy-deixPFcXw5Ly9GUqV87DWbk/view?usp=sharing",
+			"https://drive.google.com/file/d/1d1zUSzI69WEkN7wL_e_8_gkv1mJCQgg7/view?usp=sharing",
+			"https://drive.google.com/file/d/1d_fiAhtzS18eS3XkKGu-ioZxbVBOMmBi/view?usp=sharing",
+		]  //PCM or PCB
+	}
+	{
+		title: "PACE Full Syllabus Revision Assignments",
+		link: "https://drive.google.com/drive/folders/1IKfxTozYXPONXhAnBQoN1-WkzhtSS83j?usp=sharing"
+	}
+	{
+		title: "Allen Part Tests in Maths",
+		link: "https://drive.google.com/drive/folders/1FJPOxQIRHULWqHRwZv7__LDdn3GS2hUw"
+	}
+	{
+		title: "FIITJEE 2017 (AITS) Chemistry Full Syllabus Assignments",
+		link: "https://drive.google.com/drive/folders/10zO6Jz18mij_AeZ70x5jsZEoiKWg00CR?usp=sharing"
+	}
+	{
+		title: "FIITJEE 2017 (AITS) Physics Full Syllabus Assignments",
+		link: "https://drive.google.com/drive/folders/1p75kUfsOaPwAVOFbWvcN0OoPEVlg3yFr?usp=sharing"
+	}
+	{
+		title: "FIITJEE 2017 (AITS) Mathematics Full Syllabus Assignments",
+		link: "https://drive.google.com/drive/folders/1YGHkd1rm6cCJCuDqgShXaC9OSMLuIZit?usp=sharing"
+	}
+	{
+		title: "Full Sylabbus Test Dump - Allen, FIITJEE, Narayana, Chaitanya",
+		link: "https://drive.google.com/drive/folders/16emDTYVy2I43l8iHiqcRhzLFrGKHI7wf"
+	}
+	{
+		title: "VIBRANT Organic Jumbo Question Bank",
+		link: "https://drive.google.com/file/d/1vm0d-aeLQ8FQ6AFmfwE1gSVu461ew0id/view"
+	}
+	*/
 	const data = {
 		Physics: [
 			{
