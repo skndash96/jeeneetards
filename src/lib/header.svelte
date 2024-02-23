@@ -151,4 +151,7 @@
 		color: var(--txt);
 		margin-top: -.25rem;
 	}
+	header button:hover {
+		color: var(--sec)
+	}
 </style>

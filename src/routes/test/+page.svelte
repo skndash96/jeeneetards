@@ -1,6 +1,5 @@
 <script>
 	// @ts-nocheck
-	import { page } from '$app/stores';
 	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
 
@@ -93,8 +92,6 @@
 				prevRes.has(el.value) && el.classList.add('selected');
 			});
 		} else {
-			console.log("#", target.value, "#", target.value !== "");
-
 			response[subIdx][qIdx] = target.value;
 			
 			if (target.value !== "") target.classList.add('selected');
@@ -168,6 +165,8 @@
 
 			sub.questions.forEach(({ type, question: { correct_options, answer } }, qIdx) => {
 				let qEl = subEl.children[qIdx];
+				qEl.classList.add("explain");
+				
 				let opts = qEl.querySelectorAll('div.options > *');
 
 				if (!opts.length) return;
@@ -223,7 +222,7 @@
 				{/each}
 
 				{#if !practice}
-					<button class="classic finishTest" on:click={finishTest}> FINISHTest </button>
+					<button class="classic finishTest" on:click={finishTest}> FINISH </button>
 				{/if}
 			</div>
 
@@ -237,6 +236,7 @@
 							{qIdx}
 							{subIdx}
 							respond={practice ? showAnswersInTestInPractice : selectResponseInTest}
+							practice={practice}
 						/>
 					{/each}
 				</div>
