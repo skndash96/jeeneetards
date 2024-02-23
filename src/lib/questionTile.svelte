@@ -1,4 +1,5 @@
 <script>
+// @ts-nocheck
 	export let question, question_id, type, qIdx, subIdx, respond;
 </script>
 
@@ -9,6 +10,14 @@
 			<span style="margin-left: 1rem; font-size: 0.8rem; opacity: 0.8;"> (Multiple ans) </span>
 		{/if}
 	</strong>
+	<p>
+		{#if question.direction}
+			{@html question.direction}
+		{/if}
+		{#if question.comprehension}
+			{@html question.comprehension}
+		{/if}
+	</p>
 	<p>
 		{@html question.content}
 	</p>
@@ -81,12 +90,12 @@
 	div.options input {
 		background: var(--elevate);
 		color: var(--txt);
-		border: 1px solid var(--elevate);
+		border: 2px solid var(--elevate);
 		padding: 0.5rem;
 		margin-top: 1rem;
 	}
 	div.options input:focus {
-		border: 1px solid white;
+		border: 2px solid white;
 	}
 	
 	div.options :global(button.selected),

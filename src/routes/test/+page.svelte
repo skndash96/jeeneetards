@@ -4,27 +4,14 @@
 	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
 
-	let loaded = false;
+	export let data;
+	let { metaId, title, practice, subjects, response, lastResponse } = data;
 
-	let metaId = $page.url.searchParams.get('metaId');
-	let title = $page.url.searchParams.get('title');
-	let practice = $page.url.searchParams.get('practice');
-
-	let menuOpen = false;
-
-	let currentSub = 0;
-
-	let subjects = [],
-		response = [];
+	let loaded = false,
+	menuOpen = false,
+	currentSub = 0;
 
 	onMount(async () => {
-		let result = await fetch(`/pyqs/${metaId}.json`);
-		subjects = await result.json();
-
-		response = subjects.map((/** @type {{ questions: string | any[]; }} */ sub) =>
-			new Array(sub.questions.length).fill(null)
-		);
-
 		window.MathJax = {
 			tex: {
 				inlineMath: [
@@ -64,7 +51,7 @@
 		el.parentElement.append(newEl);
 	}
 
-	function validateResponse(subIdx, qIdx, target) {
+	function showAnswersInTestInPractice(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 
 		let {
@@ -83,7 +70,7 @@
 		type === 'integer' && appendIntAnswer(answer, target);
 	}
 
-	function answerResponse(subIdx, qIdx, target) {
+	function selectResponseInTest(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
@@ -114,8 +101,8 @@
 		}
 	}
 
-	function finish(e) {
-		if (!window.confirm('Confirm Finish Test?')) return;
+	function finishTest(e) {
+		if (!window.confirm('Confirm FinishTest Test?')) return;
 
 		e.target.disabled = true;
 
@@ -164,10 +151,10 @@
 			});
 		});
 
-		showResult(total, max);
+		showAnswersInTest(total, max);
 	}
 
-	function showResult(total, max) {
+	function showAnswersInTest(total, max) {
 		let subEls = document.querySelectorAll('div.qlist');
 
 		document.querySelectorAll('div.qlist').forEach((el) => el.classList.add('result'));
@@ -236,7 +223,7 @@
 				{/each}
 
 				{#if !practice}
-					<button class="classic finish" on:click={finish}> FINISH </button>
+					<button class="classic finishTest" on:click={finishTest}> FINISHTest </button>
 				{/if}
 			</div>
 
@@ -249,7 +236,7 @@
 							{type}
 							{qIdx}
 							{subIdx}
-							respond={practice ? validateResponse : answerResponse}
+							respond={practice ? showAnswersInTestInPractice : selectResponseInTest}
 						/>
 					{/each}
 				</div>
@@ -411,7 +398,7 @@
 		background: green !important;
 	}
 
-	div.menu button.finish {
+	div.menu button.finishTest {
 		background: white;
 		color: var(--pri);
 		border: 2px solid var(--txt);
