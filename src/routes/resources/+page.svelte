@@ -68,7 +68,12 @@
 		title: "VIBRANT Organic Jumbo Question Bank",
 		link: "https://drive.google.com/file/d/1vm0d-aeLQ8FQ6AFmfwE1gSVu461ew0id/view"
 	}
+	{
+		title: "Mohit Tyagi Playlist Collection in PCM",
+		link: "https://docs.google.com/document/d/16uirIb3t5MPXa9f9xknZ2uQnLIA9rLLnMlV_NkHfoJ4/edit"
+	}
 	*/
+	
 	const data = {
 		Physics: [
 			{

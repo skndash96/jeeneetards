@@ -67,6 +67,11 @@ button.classic:hover {
 button.classic:disabled {
     opacity: 0.3;
 }
+
+button.classic:hover {
+    transform: scale(0.9);
+    color: var(--sec);
+}
 button.classic:disabled:hover {
     transform: scale(1);
 }
@@ -82,6 +87,7 @@ input {
 input:focus {
     outline: none;
 }
+
 a {
     color: inherit;
     text-decoration: none;
@@ -89,12 +95,13 @@ a {
 a:hover {
     text-decoration: underline 1px;
 }
+
 a.classic:hover {
     transform: scale(0.9);
     color: var(--sec);
     text-decoration: none;
 }
-a:hover svg {
+a.classic:hover svg {
     fill: var(--sec);
 }
 

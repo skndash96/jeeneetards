@@ -1,6 +1,18 @@
 <script>
 // @ts-nocheck
-	export let question, question_id, type, qIdx, subIdx, respond;
+	export let question, question_id, type, qIdx, subIdx, respond, practice;
+
+	let sol = false;
+
+	function toggleExplanation({ target }) {
+		sol = !sol;
+
+		let el = target.parentElement;
+		
+		sol
+		? el.classList.add("explain")
+		: el.classList.remove("explain");
+	}
 </script>
 
 <div id={question_id} class="qTile">
@@ -44,6 +56,20 @@
 			{/each}
 		{/if}
 	</div>
+
+	{#if practice}
+	<button class="explanation" on:click={toggleExplanation}>
+		{#if sol} &lt;
+		{:else} &gt;
+		{/if}
+		Solution
+	</button>
+	{/if}
+	
+	<p class="explanation" >
+		Solution:
+		{@html question.explanation || "Currently not available."}
+	</p>
 </div>
 
 <style>
@@ -84,7 +110,7 @@
 		gap: .5rem;
 		border: 2px solid var(--elevate);
 	}
-	div.options button:hover {
+	div.options button:not(disabled):hover {
 		background: var(--elevate);
 	}
 	div.options input {
@@ -103,12 +129,25 @@
 		border: 2px solid var(--ter);
 	}
 
-	:global(div.qlist.result .selected) {
-		border-width: 5px !important;
+	button.explanation {
+		color: var(--txt);
 	}
-	:global(div.qlist.result button) {
-		border-width: 5px !important;
+	button.explanation:hover {
+		color: var(--sec);
 	}
+	:global(div.qTile.explain button.explanation) {
+		display: block;
+	}
+	p.explanation {
+		background: #fff20011;
+		padding: 1rem;
+		display: none;
+	}
+	:global(div.qTile.explain p.explanation) {
+		border: 2px solid var(--highlight);
+		display: block;
+	}
+
 	:global(div.qTile .correct) {
 		background: lightgreen !important;
 		color: black !important;
