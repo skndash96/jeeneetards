@@ -34,18 +34,18 @@
 
 		document.head.append(script);
 
-		script.addEventListener("load", () => {
+		script.addEventListener("load", async () => {
 			let qs = Array.from(document.querySelectorAll("div.qTile"));
 
-			MathJax.typesetPromise(qs.slice(0, 10))
-			.then(() => {
+			try {
+				await MathJax.typesetPromise(qs.slice(0, 10));
+			
 				loaded = true;
 
-				MathJax.typesetPromise(qs.slice(10))
-					.catch(err => console.error(err));
-			})
-			.catch((err) => console.error(err));
-
+				await MathJax.typesetPromise(qs.slice(10));
+			} catch (e) {
+				console.error("TYPESET Failed", e);
+			}
 		});
 
 		return;
@@ -59,7 +59,7 @@
 		el.parentElement.append(newEl);
 	}
 
-	function showAnswersInTestInPractice(subIdx, qIdx, target) {
+	function practiceRespond(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 
 		let {
@@ -78,16 +78,14 @@
 		type === 'integer' && appendIntAnswer(answer, target);
 	}
 
-	function selectResponseInTest(subIdx, qIdx, target) {
+	function testRespond(subIdx, qIdx, target) {
 		let elems = target.parentNode.querySelectorAll(`*[name="${target.name}"]`);
 
 		let mcqm = subjects[subIdx].questions[qIdx].type === 'mcqm';
 
 		let prevRes = response[subIdx][qIdx];
 
-		elems.forEach((el) => {
-			el.classList.remove('selected');
-		});
+		elems.forEach((el) => el.classList.remove('selected'));
 
 		if (prevRes === target.value) {
 			response[subIdx][qIdx] = null;
@@ -108,7 +106,7 @@
 	}
 
 	function finishTest(e) {
-		if (!window.confirm('Confirm FinishTest Test?')) return;
+		if (!window.confirm('Confirm Finish Test?')) return;
 
 		e.target.disabled = true;
 
@@ -144,16 +142,16 @@
 			});
 		});
 
-		showAnswersInTest(total, max);
+		showResult(total, max);
 	}
 
-	function showAnswersInTest(total, max) {
+	function showResult(total, max) {
 		let subEls = document.querySelectorAll('div.qlist');
 
 		document.querySelectorAll('div.qlist').forEach((el) => el.classList.add('result'));
 
 		document
-			.querySelectorAll('div.qlist button, div.qlist input')
+			.querySelectorAll('div.options button, div.options input')
 			.forEach((el) => (el.disabled = true));
 
 		subjects.forEach((sub, subIdx) => {
@@ -231,7 +229,7 @@
 							{type}
 							{qIdx}
 							{subIdx}
-							respond={practice ? showAnswersInTestInPractice : selectResponseInTest}
+							respond={practice ? practiceRespond : testRespond}
 							practice={practice}
 						/>
 					{/each}

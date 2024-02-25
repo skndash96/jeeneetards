@@ -4,14 +4,8 @@
 
 	let sol = false;
 
-	function toggleExplanation({ target }) {
+	function toggleExplanation() {
 		sol = !sol;
-
-		let el = target.parentElement;
-		
-		sol
-		? el.classList.add("explain")
-		: el.classList.remove("explain");
 	}
 </script>
 
@@ -29,7 +23,7 @@
 		{#if question.comprehension}
 			{@html question.comprehension}
 		{/if}
-	</p>
+		<br />
 	<p>
 		{@html question.content}
 	</p>
@@ -57,16 +51,14 @@
 		{/if}
 	</div>
 
-	{#if practice}
-	<button class="explanation" on:click={toggleExplanation}>
+	<button class="explanation" class:test={!practice} on:click={toggleExplanation}>
 		{#if sol} &lt;
 		{:else} &gt;
 		{/if}
 		Solution
 	</button>
-	{/if}
 	
-	<p class="explanation" >
+	<p class="explanation" class:show={sol}>
 		Solution:
 		{@html question.explanation || "Currently not available."}
 	</p>
@@ -85,6 +77,8 @@
 		grid-template-columns: 1fr 1fr;
 		grid-template-rows: 1fr 1fr;
 		place-items: center;
+		gap: .5rem;
+		margin: .5rem 0;
 	}
 
 	
@@ -101,7 +95,6 @@
 	div.options button {
 		justify-self: stretch;
 		align-self: stretch;
-		margin: 0.5rem;
 		padding: 0.5rem;
 		color: var(--txt);
 		position: relative;
@@ -135,15 +128,20 @@
 	button.explanation:hover {
 		color: var(--sec);
 	}
-	:global(div.qTile.explain button.explanation) {
+
+	button.test.explanation {
+		display: none;
+	}
+	:global(div.qTile.explain button.test.explanation) {
 		display: block;
 	}
+
 	p.explanation {
 		background: #fff20011;
 		padding: 1rem;
 		display: none;
 	}
-	:global(div.qTile.explain p.explanation) {
+	p.explanation.show {
 		border: 2px solid var(--highlight);
 		display: block;
 	}
