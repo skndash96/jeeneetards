@@ -24,20 +24,29 @@
 				fontCache: 'global'
 			},
 			startup: {
-				pageReady() {
-					return MathJax.startup.defaultPageReady().then(() => {
-						loaded = true;
-					});
-				}
+				typeset: false
 			}
 		};
 
 		let script = document.createElement('script');
-		script.src =
-			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.min.js?config=TeX-AMS-MML_HTMLorMML';
+		script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.min.js?config=TeX-AMS-MML_HTMLorMML";
 		script.async = true;
 
 		document.head.append(script);
+
+		script.addEventListener("load", () => {
+			let qs = Array.from(document.querySelectorAll("div.qTile"));
+
+			MathJax.typesetPromise(qs.slice(0, 10))
+			.then(() => {
+				loaded = true;
+
+				MathJax.typesetPromise(qs.slice(10))
+					.catch(err => console.error(err));
+			})
+			.catch((err) => console.error(err));
+
+		});
 
 		return;
 	});
@@ -127,20 +136,7 @@
 					if (q.some((opt) => !correct_options.includes(opt))) {
 						total -= negMarks;
 					} else {
-						total +=
-							correct_options.length === 4
-								? q.length
-								: correct_options.length === 3
-									? q.length === 3
-										? 4
-										: q.length
-									: correct_options.length === 2
-										? q.length === 2
-											? 4
-											: q.length
-										: q.length === 1
-											? 4
-											: 0;
+						total += correct_options.length === q.length ? 4 : q.length;
 					}
 				} else if (type === 'integer') {
 					total += answer === q ? marks : -1 * negMarks;
