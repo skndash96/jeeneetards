@@ -60,6 +60,10 @@ button {
     outline: none;
     border: none;
 }
+button.classic:hover {
+    transform: scale(0.9);
+    color: var(--sec);
+}
 button.classic:disabled {
     opacity: 0.3;
 }
@@ -91,12 +95,13 @@ a {
 a:hover {
     text-decoration: underline 1px;
 }
-a.classic:hover{
+
+a.classic:hover {
     transform: scale(0.9);
     color: var(--sec);
     text-decoration: none;
 }
-a:hover svg {
+a.classic:hover svg {
     fill: var(--sec);
 }
 
