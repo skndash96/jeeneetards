@@ -1,5 +1,6 @@
 import { browser } from '$app/environment';
 import { error } from '@sveltejs/kit';
+import Test from "./utils.ts";
 
 export const ssr = false;
 
@@ -9,14 +10,11 @@ export async function load({ url, fetch }) {
     if (metaId && title) {
         let res = await fetch(`/pyqs/${metaId}.json`);
         
-        let subjects = await res.json();
+        let qs = await res.json();
+        let test = new Test(!!practice, qs);
 
         let lastResponse;
         
-        let response = subjects.map((/** @type {{ questions: string | any[]; }} */ sub) =>
-            new Array(sub.questions.length).fill(null)
-        );
-
         if (browser) {
             lastResponse = window.localStorage.getItem("lastResponse");
             lastResponse = lastResponse && JSON.parse(lastResponse);
@@ -27,7 +25,7 @@ export async function load({ url, fetch }) {
         }
 
         return {
-            metaId, title, practice, subjects, response, lastResponse
+            metaId, title, test, lastResponse
         };
     }
 

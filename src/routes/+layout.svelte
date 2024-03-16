@@ -6,8 +6,8 @@
 	import Footer from '$lib/footer.svelte';
 </script>
 
-<div class="container">
-	<TopScroll />
+<div id="wrapper">
+	<TopScroll to_id="start" />
 
 	<Header />
 
@@ -19,11 +19,6 @@
 </div>
 
 <style>
-    :global(div.container > div.container) {
-        padding-top: 2rem;
-        /* animation: slidein 100ms 1; */
-    }
-
     div#start {
         padding-top: 7rem;
         width: fit-content;

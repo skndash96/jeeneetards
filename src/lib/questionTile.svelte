@@ -1,6 +1,6 @@
 <script>
 // @ts-nocheck
-	export let question, question_id, type, qIdx, subIdx, respond, practice;
+	export let q, test;
 
 	let sol = false;
 
@@ -9,40 +9,40 @@
 	}
 </script>
 
-<div id={question_id} class="qTile">
+<div id={q.question_id} class="qTile">
 	<strong class="qno">
-		Question {qIdx + 1}
-		{#if type === 'mcqm'}
+		Question {q.qi + 1}
+		{#if q.type === 'mcqm'}
 			<span style="margin-left: 1rem; font-size: 0.8rem; opacity: 0.8;"> (Multiple ans) </span>
 		{/if}
 	</strong>
 	<p>
-		{#if question.direction}
-			{@html question.direction}
+		{#if q.direction}
+			{@html q.direction}
 		{/if}
-		{#if question.comprehension}
-			{@html question.comprehension}
+		{#if q.comprehension}
+			{@html q.comprehension}
 		{/if}
 		<br />
 	<p>
-		{@html question.content}
+		{@html q.content}
 	</p>
 
 	<div class="options">
-		{#if type == 'integer'}
+		{#if q.type == 'integer'}
 			<input
-				name={question_id}
+				name={q.question_id}
 				style="colspan: 2;"
-				type="integer"
+				type="number"
 				placeholder="Answer here"
-				on:change={({ target }) => respond(subIdx, qIdx, target)}
+				on:change={({ target }) => test.respond(q, target)}
 			/>
 		{:else}
-			{#each question.options as opt}
+			{#each q.options as opt}
 				<button
-					name={question_id}
+					name={q.question_id}
 					value={opt.identifier}
-					on:click={({ target }) => respond(subIdx, qIdx, target)}
+					on:click={({ target }) => test.respond(q, target)}
 				>
 					<span>{opt.identifier}</span>
 					{@html opt.content}
@@ -51,7 +51,7 @@
 		{/if}
 	</div>
 
-	<button class="explanation" class:test={!practice} on:click={toggleExplanation}>
+	<button class="explanation" class:test={!test.is_practice} on:click={toggleExplanation}>
 		{#if sol} &lt;
 		{:else} &gt;
 		{/if}
@@ -60,7 +60,7 @@
 	
 	<p class="explanation" class:show={sol}>
 		Solution:
-		{@html question.explanation || "Currently not available."}
+		{@html q.explanation || "Currently not available."}
 	</p>
 </div>
 
