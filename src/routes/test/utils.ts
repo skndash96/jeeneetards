@@ -140,6 +140,17 @@ class Test {
             document.getElementById("score").textContent = `You scored ${score}/${maxMarks}`;
         }
     }
+
+    dump() {
+        let item = {
+            url: location.href,
+            res: this.response_sheet
+        };
+
+        localStorage.setItem(
+            "last_test", JSON.stringify(item)
+        );
+    }
 }
 
 export default Test;

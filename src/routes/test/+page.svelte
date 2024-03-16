@@ -70,6 +70,8 @@
 				<span style="font-size: 2rem;">...Loading</span>
 			{/if}
 
+			<a href="#" on:click={() => history.go(-1)}> &lt; Back to PYQs </a>
+			
 			<h3 class="title">
 				{title}
 			</h3>
@@ -145,9 +147,14 @@
 		display: none;
 	}
 
+	div.container {
+		overflow: hidden;
+	}
+
 	div.main {
 		padding: 2rem 1rem;
 		padding-top: 0;
+		overflow-x: scroll;
 	}
 
 	div.main > h3 {
@@ -219,7 +226,7 @@
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 		font-weight: 600;
 		position: absolute;
-		top: 6rem;
+		top: 2rem;
 		right: 0;
 		margin-right: 105vw;
 		pointer-events: initial;
@@ -284,7 +291,7 @@
 		div.main {
 			flex-grow: 1;
 			flex-shrink: 0;
-			flex-basis: 70vw;
+			flex-basis: 75vw;
 			height: 100%;
 			overflow: scroll;
 			scroll-behavior: smooth;
@@ -296,7 +303,6 @@
 			transform: unset;
 			position: unset;
 			width: unset;
-			overflow-y: scroll;
 			z-index: 1;
 		}
 		div.palette {
@@ -310,13 +316,17 @@
 			display: none;
 		}
 
-		div.stat::-webkit-scrollbar, div.main::-webkit-scrollbar {
+		:global(body::-webkit-scrollbar) {
+			display: none;
+		}
+
+		div.palette::-webkit-scrollbar, div.main::-webkit-scrollbar {
 			background: rgba(100, 148, 237, 0.351);
 			width: 10px;
 			height: 10px;
 		}
 
-		div.stat::-webkit-scrollbar-thumb, div.main::-webkit-scrollbar-thumb {
+		div.palette::-webkit-scrollbar-thumb, div.main::-webkit-scrollbar-thumb {
 			background: cornflowerblue;
 		}
 
