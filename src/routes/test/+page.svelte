@@ -11,8 +11,6 @@
 	currentSub = 0;
 
 	onMount(async () => {
-		document.querySelector("#wrapper > #start")?.remove();
-
 		window.MathJax = {
 			tex: {
 				inlineMath: [
@@ -75,7 +73,6 @@
 			<h3 class="title">
 				{title}
 			</h3>
-
 
 			<p id="score"></p>
 
@@ -275,20 +272,12 @@
 
 	/*996px*/
 	@media (min-width: 996px) {
-		:global(div#wrapper) {
-			height: 100dvh;
-		}
-		:global(header, footer) {
-			display: none !important;
-		}
-		:global(#topscroll) {
-			right: 35vw !important;
-		}
-	
 		div.container {
 			position: relative;
-			height: 100%;
+			height: 100vh;
+			height: 100dvh;
 			display: flex;
+			flex-direction: row;
 			flex-direction: row;
 		}
 

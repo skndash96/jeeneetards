@@ -1,5 +1,5 @@
 <script>    
-	import '../lib/main.css';
+	import '../../lib/main.css';
 
 	import TopScroll from '$lib/topScroll.svelte';
 	import Header from '$lib/header.svelte';
