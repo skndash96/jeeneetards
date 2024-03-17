@@ -34,7 +34,7 @@ interface Subject {
     si: number
 }
 
-interface OptionElement extends Element {
+interface OptionElement extends HTMLElement {
     value: string,
     name: string
 }
@@ -75,19 +75,33 @@ class Test {
             else el.classList.remove("selected", "correct", "wrong");
 
             if (this.is_practice && pre.includes(el.value)) {
-                q.correct_options.includes(el.value)
-                ? el.classList.add("correct")
-                : el.classList.add("wrong");
+                q.correct_options.includes(el.value) || q.answer === el.value
+                    ? el.classList.add("correct")
+                    : el.classList.add("wrong");
+
+                if (q.type === "integer") this.append_int_ans(
+                    t.parentElement,
+                    q.answer
+                )
             }
         });
 
-        if (this.is_practice) return;
+        this.update_stat(q.si,  q.qi, pre);
+    }
 
-        //Update Stat
-        let stat = document.querySelector(`#palette a[name='${q.si}_${q.qi}']`);
-    
-        if (pre?.[0]?.length > 0) stat.classList.add("tick")
-        else stat.classList.remove("tick");
+    update_stat(si: number, qi: number, to: string[] | undefined) {
+        let stat = document.querySelector(`#palette a[name='${si}_${qi}']`);
+  
+        if (to && to[0]?.length > 0) stat?.classList.add("tick")
+        else stat?.classList.remove("tick");    
+    }
+
+    append_int_ans(target: HTMLElement | null , answer: string) {
+        let el = document.createElement("span");
+        el.classList.add("correct");
+        el.textContent = "Answer: " + answer;
+
+        target?.appendChild(el);
     }
 
     finish() {
@@ -114,13 +128,10 @@ class Test {
                     });
             
                     //Append Integer answer
-                    if (type === "integer") {
-                        let el = document.createElement("span");
-                        el.classList.add("correct");
-                        el.textContent = "Answer: " + answer;
-
-                        document.querySelector(`#${question_id} > div.options`)?.appendChild(el);
-                    }
+                    if (type === "integer") this.append_int_ans(
+                        document.querySelector(`#${question_id} > div.options`),
+                        answer
+                    );
                     
                     maxMarks += marks;
                     

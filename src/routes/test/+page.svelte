@@ -7,8 +7,8 @@
 	let { metaId, title, test, lastResponse } = data;
 
 	let loaded = false,
-	menuOpen = false,
-	currentSub = 0;
+		menuOpen = false,
+		currentSub = 0;
 
 	onMount(async () => {
 		window.MathJax = {
@@ -29,20 +29,21 @@
 		};
 
 		let script = document.createElement('script');
-		script.src = "https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.min.js?config=TeX-AMS-MML_HTMLorMML";
+		script.src =
+			'https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.min.js?config=TeX-AMS-MML_HTMLorMML';
 		script.async = true;
 
 		document.head.append(script);
 
-		script.addEventListener("load", async () => {
-			let qs = Array.from(document.querySelectorAll("div.qTile"));
+		script.addEventListener('load', async () => {
+			let qs = Array.from(document.querySelectorAll('div.qTile'));
 
 			try {
 				await MathJax.typesetPromise(qs);
 
 				loaded = true;
 			} catch (e) {
-				console.error("TYPESET Failed", e);
+				console.error('TYPESET Failed', e);
 			}
 		});
 
@@ -65,13 +66,13 @@
 	{:else}
 		<div class="main">
 			<div id="start"></div>
-			
+
 			{#if !loaded}
 				<span style="font-size: 2rem;">...Loading</span>
 			{/if}
 
 			<a href="#" on:click={() => history.go(-1)}> &lt; Back to PYQs </a>
-			
+
 			<h3 class="title">
 				{title}
 			</h3>
@@ -97,48 +98,43 @@
 			{#each test.qList as sub}
 				<div id={sub.title} class="qlist" class:visible={currentSub === sub.si}>
 					{#each sub.questions as q}
-						<QuestionTile
-							{q}
-							bind:test={test}
-						/>
+						<QuestionTile {q} bind:test />
 					{/each}
 				</div>
 			{/each}
 		</div>
 
-		{#if !test.is_practice}
-			<div class="stat" class:open={menuOpen}>
-				<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
-					{#if menuOpen}
-						<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
-					{:else}
-						<span> >Palette </span>
-					{/if}
-				</button>
+		<div class="stat" class:open={menuOpen}>
+			<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
+				{#if menuOpen}
+					<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
+				{:else}
+					<span> >Palette </span>
+				{/if}
+			</button>
 
-				<div id="palette" class="palette">
-					{#each test.response_sheet as sub, si}
-						<h3>{test.qList[si].title}</h3>
-						<div class="substat">
-							{#each sub as q, qi}
-								<a
-									style="pointer-events: initial;"
-									href={'#' + (test.qList[si].questions[qi].question_id || '')}
-									class="qstat"
-									name={`${si}_${qi}`}
-									on:click={() => {
-										currentSub = si;
-										menuOpen = false;
-									}}
-								>
-									{qi + 1}
-								</a>
-							{/each}
-						</div>
-					{/each}
-				</div>
+			<div id="palette" class="palette">
+				{#each test.response_sheet as sub, si}
+					<h3>{test.qList[si].title}</h3>
+					<div class="substat">
+						{#each sub as q, qi}
+							<a
+								style="pointer-events: initial;"
+								href={'#' + (test.qList[si].questions[qi].question_id || '')}
+								class="qstat"
+								name={`${si}_${qi}`}
+								on:click={() => {
+									currentSub = si;
+									menuOpen = false;
+								}}
+							>
+								{qi + 1}
+							</a>
+						{/each}
+					</div>
+				{/each}
 			</div>
-		{/if}
+		</div>
 	{/if}
 </div>
 
@@ -210,7 +206,7 @@
 		width: 75vw;
 		max-width: 32rem;
 		margin-left: auto;
-		padding: 2rem .5rem 2rem 1rem;
+		padding: 2rem 0.5rem 2rem 1rem;
 		color: white;
 		box-shadow: inset 0px 2px 10px rgba(0, 0, 0, 5);
 		max-height: 80vh;
@@ -311,7 +307,7 @@
 			width: unset;
 			background: var(--elevate);
 		}
-	
+
 		button.palette {
 			display: none;
 		}
@@ -320,16 +316,28 @@
 			display: none;
 		}
 
-		div.palette::-webkit-scrollbar, div.main::-webkit-scrollbar {
-			background: rgba(100, 148, 237, 0.351);
-			width: 10px;
-			height: 10px;
+		:root {
+			--size: 10px;
+			--thumb: cornflowerblue;
+			--track: #6494ed5a;
 		}
 
-		div.palette::-webkit-scrollbar-thumb, div.main::-webkit-scrollbar-thumb {
-			background: cornflowerblue;
+		div.palette, div.main {
+			scrollbar-width: var(--size);
+			scrollbar-color: var(--thumb) var(--track);
 		}
 
+		div.palette::-webkit-scrollbar,
+		div.main::-webkit-scrollbar {
+			background: var(--track);
+			width: var(--size);
+			height: var(--size);
+		}
+
+		div.palette::-webkit-scrollbar-thumb,
+		div.main::-webkit-scrollbar-thumb {
+			background: var(--thumb);
+		}
 	}
 
 	/*
@@ -342,5 +350,4 @@
 				.palette
 		footer
 	*/
-
 </style>
