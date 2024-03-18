@@ -147,7 +147,9 @@
 
 	div.main {
 		padding: 0 1rem 1rem 1rem;
-		overflow-x: hidden;
+		height: 100%;
+		overflow-y: scroll;
+		scroll-behavior: smooth;
 	}
 
 	div.main > h3 {
@@ -242,9 +244,9 @@
 		background: var(--elevate);
 		color: white;
 		text-align: center;
-		font-size: .9rem;
-		width: 1.6rem;
-		height: 1.6rem;
+		font-size: 0.9rem;
+		width: 1.75rem;
+		height: 1.75rem;
 	}
 	:global(a.qstat.tick) {
 		background: green !important;
@@ -273,6 +275,10 @@
 
 	/*996px*/
 	@media (min-width: 996px) {
+		:global(#wrapper) {
+			overflow: hidden;
+		}
+
 		div.container {
 			position: relative;
 			display: flex;
@@ -283,7 +289,6 @@
 			flex-grow: 1;
 			flex-shrink: 0;
 			flex-basis: 75vw;
-			scroll-behavior: smooth;
 		}
 
 		div.stat {
@@ -304,45 +309,39 @@
 		button.palette {
 			display: none;
 		}
+	}
 
-		:global(body::-webkit-scrollbar) {
-			display: none;
-		}
+	:root {
+		--size: 10px;
+		--thumb: cornflowerblue;
+		--track: #6494ed5a;
+	}
 
-		:root {
-			--width: 10px;
-			--height: 5px;
-			--thumb: cornflowerblue;
-			--track: #6494ed5a;
-		}
+	div.palette,
+	div.main {
+		scrollbar-width: var(--size);
+		scrollbar-color: var(--thumb) var(--track);
+	}
 
-		div.palette,
-		div.main {
-			scrollbar-width: var(--width);
-			scrollbar-color: var(--thumb) var(--track);
-		}
+	div.palette::-webkit-scrollbar,
+	div.main::-webkit-scrollbar {
+		background: var(--track);
+		width: var(--size);
+		height: var(--size);
+	}
 
-		div.palette::-webkit-scrollbar,
-		div.main::-webkit-scrollbar {
-			background: var(--track);
-			width: var(--width);
-			height: var(--height);
-		}
-
-		div.palette::-webkit-scrollbar-thumb,
-		div.main::-webkit-scrollbar-thumb {
-			background: var(--thumb);
-		}
+	div.palette::-webkit-scrollbar-thumb,
+	div.main::-webkit-scrollbar-thumb {
+		background: var(--thumb);
 	}
 
 	/*
+	scrolltop
 	#wrapper
 		header
-		scrolltop
+		______
 		.container
-			.main
-			.stat
-				.palette
-		footer
+			.main | .stat
+						.palette
 	*/
 </style>
