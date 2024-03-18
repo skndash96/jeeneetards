@@ -152,7 +152,7 @@ class Test {
         }
     }
 
-    dump() {
+    async dump() {
         let item = {
             url: location.href,
             res: this.response_sheet

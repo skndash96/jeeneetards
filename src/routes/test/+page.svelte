@@ -71,8 +71,6 @@
 				<span style="font-size: 2rem;">...Loading</span>
 			{/if}
 
-			<a href="#" on:click={() => history.go(-1)}> &lt; Back to PYQs </a>
-
 			<h3 class="title">
 				{title}
 			</h3>
@@ -148,9 +146,8 @@
 	}
 
 	div.main {
-		padding: 2rem 1rem;
-		padding-top: 0;
-		overflow-x: scroll;
+		padding: 0 1rem 1rem 1rem;
+		overflow-x: hidden;
 	}
 
 	div.main > h3 {
@@ -209,8 +206,8 @@
 		padding: 2rem 0.5rem 2rem 1rem;
 		color: white;
 		box-shadow: inset 0px 2px 10px rgba(0, 0, 0, 5);
-		max-height: 80vh;
-		overflow-y: scroll;
+		height: 100%;
+		overflow-y: auto;
 		pointer-events: initial;
 		background: var(--pri);
 	}
@@ -222,7 +219,7 @@
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 		font-weight: 600;
 		position: absolute;
-		top: 2rem;
+		top: 4rem;
 		right: 0;
 		margin-right: 105vw;
 		pointer-events: initial;
@@ -242,11 +239,12 @@
 	}
 	a.qstat {
 		display: block;
-		width: 2rem;
-		height: 2rem;
 		background: var(--elevate);
 		color: white;
 		text-align: center;
+		font-size: .9rem;
+		width: 1.6rem;
+		height: 1.6rem;
 	}
 	:global(a.qstat.tick) {
 		background: green !important;
@@ -277,10 +275,7 @@
 	@media (min-width: 996px) {
 		div.container {
 			position: relative;
-			height: 100vh;
-			height: 100dvh;
 			display: flex;
-			flex-direction: row;
 			flex-direction: row;
 		}
 
@@ -288,8 +283,6 @@
 			flex-grow: 1;
 			flex-shrink: 0;
 			flex-basis: 75vw;
-			height: 100%;
-			overflow: scroll;
 			scroll-behavior: smooth;
 		}
 
@@ -317,21 +310,23 @@
 		}
 
 		:root {
-			--size: 10px;
+			--width: 10px;
+			--height: 5px;
 			--thumb: cornflowerblue;
 			--track: #6494ed5a;
 		}
 
-		div.palette, div.main {
-			scrollbar-width: var(--size);
+		div.palette,
+		div.main {
+			scrollbar-width: var(--width);
 			scrollbar-color: var(--thumb) var(--track);
 		}
 
 		div.palette::-webkit-scrollbar,
 		div.main::-webkit-scrollbar {
 			background: var(--track);
-			width: var(--size);
-			height: var(--size);
+			width: var(--width);
+			height: var(--height);
 		}
 
 		div.palette::-webkit-scrollbar-thumb,
