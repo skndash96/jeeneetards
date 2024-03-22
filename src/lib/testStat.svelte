@@ -55,8 +55,14 @@
 		bottom: 0;
 		z-index: 1000;
 		transform: translateX(100%);
-		background-color: #000000aa;
+		background-color: #00000011;
 		transition: all ease-out 100ms;
+	}
+	#stat * {
+		color: var(--txt);
+	}
+	:global(html.dark #stat) {
+		background: #000000aa;
 	}
 	#stat.open {
 		pointer-events: initial;

@@ -177,37 +177,17 @@
 				.forEach(el => (el.disabled = true));
         }
     }
-
-	/**
-	 * @param {KeyboardEvent} e
-	*/
-	function onKeyDown(e) {
-		console.log(document.elementsFromPoint(
-			window.innerWidth*0.4,
-			window.innerHeight*0.5
-		));
-
-		switch (e.keyCode) {
-			case 38:
-				alert("UP");
-			case 40:
-				alert("DOWN");
-		}
-	}
 </script>
 
-<!-- <svelte:window on:keydown={onKeyDown} /> -->
-
 <div id="container">
-	<TopScroll to_id="string" />
-
 	<div class="test">
 		<h3>{title}</h3>
+
+		<p id="score"></p><br/>
 
 		<div class="menu">
 			<div id="start"></div>
 
-			<p id="score"></p><br/>
 
 			{#each qList as sub}
 				<button
@@ -249,6 +229,10 @@
 		align-items: stretch;
 	}
 	
+	div#start {
+		margin-top: -5rem;
+		padding-top: 5rem;
+	}
 	div.test {
 		flex-grow: 1;
 		flex-shrink: 0;
@@ -258,7 +242,7 @@
 	}
 
 	div.test > h3 {
-		padding: 2rem;
+		padding: 2rem 2rem 0 2rem;
 		text-align: center;
 	}
     
@@ -287,14 +271,15 @@
 
 	div.menu {
 		display: flex;
-		gap: 1rem;
 		margin-top: 2rem;
+		padding: .5rem;
 		flex-wrap: wrap;
 		margin: auto;
 		width: fit-content;
 	}
 	div.menu button {
-		padding: 0.5rem 1rem;
+		padding: 0.5rem;
+		margin: 0.25rem;
 		background: var(--sec);
 		color: white;
 		font-weight: 500;
