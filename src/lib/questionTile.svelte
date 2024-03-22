@@ -1,6 +1,8 @@
 <script>
-// @ts-nocheck
-	export let q, test;
+	export let
+		/**@type {Question} */q,
+		/**@type {Function}*/ respond,
+		/**@type {boolean}*/ practice;
 
 	let sol = false;
 
@@ -35,14 +37,14 @@
 				style="colspan: 2;"
 				type="number"
 				placeholder="Answer here"
-				on:change={({ target }) => test.respond(q, target)}
+				on:change={({ target }) => respond(q, target)}
 			/>
 		{:else}
 			{#each q.options as opt}
 				<button
 					name={q.question_id}
 					value={opt.identifier}
-					on:click={({ target }) => test.respond(q, target)}
+					on:click={({ target }) => respond(q, target)}
 				>
 					<span>{opt.identifier}</span>
 					{@html opt.content}
@@ -51,7 +53,7 @@
 		{/if}
 	</div>
 
-	<button class="explanation" class:test={!test.is_practice} on:click={toggleExplanation}>
+	<button class="explanation" class:test={!practice} on:click={toggleExplanation}>
 		{#if sol} &lt;
 		{:else} &gt;
 		{/if}
@@ -148,6 +150,7 @@
 
 	:global(div.qTile .correct) {
 		background: lightgreen !important;
+		border-color: lightgreen !important;
 		color: black !important;
 	}
 	:global(div.qTile button.pcorrect) {
@@ -155,6 +158,7 @@
 	}
 	:global(div.qTile .wrong) {
 		background: lightcoral !important;
+		border-color: lightcoral !important;
 		color: black !important;
 	}
 	:global(div.qTile span.correct) {

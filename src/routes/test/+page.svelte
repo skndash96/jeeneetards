@@ -1,16 +1,30 @@
 <script>
-	// @ts-nocheck
-	import QuestionTile from '$lib/questionTile.svelte';
 	import { onMount } from 'svelte';
+	import './typedef';
+	import TestStat from '$lib/testStat.svelte';
+	import QuestionTile from '$lib/questionTile.svelte';
+	import TopScroll from '$lib/topScroll.svelte';
 
 	export let data;
-	let { metaId, title, test, lastResponse } = data;
 
 	let loaded = false,
 		menuOpen = false,
 		currentSub = 0;
+    
+	let {
+        metaId,
+        title,
+        practice,
+        qList
+    } = data;
+
+	/**
+	 * @type {ResponseSheet}
+	 */
+	let response_sheet = qList.map((sub) => Array(sub.questions.length).fill(null));
 
 	onMount(async () => {
+		//@ts-ignore
 		window.MathJax = {
 			tex: {
 				inlineMath: [
@@ -39,7 +53,8 @@
 			let qs = Array.from(document.querySelectorAll('div.qTile'));
 
 			try {
-				await MathJax.typesetPromise(qs);
+				//@ts-ignore
+				await window.MathJax.typesetPromise(qs);
 
 				loaded = true;
 			} catch (e) {
@@ -50,113 +65,217 @@
 		return;
 	});
 
-	function finish() {
-		test.finish();
+	/**
+	 *@param {Question} q
+	 *@param {HTMLInputElement} t
+	 */
+	function respond(q, t) {
+		let pre = response_sheet[q.si][q.qi] || [];
+		let v = t.value;
+		let idx = pre.findIndex((x) => x === v);
+
+		if (idx !== -1) {
+			pre.splice(idx, 1);
+		} else {
+			if (q.type === 'mcqm') pre.push(v);
+			else pre = [v];
+		}
+
+		update_stat(q, pre, t);
+	}
+
+	/**
+	 * @param {Question} q
+	 * @param {string[] | null} to
+	 * @param {HTMLInputElement} target
+	 */
+	function update_stat({ si, qi, type, answer, correct_options }, to, target) {
+		response_sheet[si][qi] = to;
+		response_sheet = response_sheet;
+
+		target.parentElement?.querySelectorAll(`*[name='${target.name}']`).forEach((el) => {
+			// @ts-ignore
+			if (el.value && to.includes(el.value)) el.classList.add('selected');
+			else el.classList.remove('selected', 'correct', 'wrong');
+
+			// @ts-ignore
+			if (practice && to.includes(el.value)) {
+				// @ts-ignore
+				correct_options.includes(el.value) || answer === el.value
+					? el.classList.add('correct')
+					: el.classList.add('wrong');
+
+				if (type === 'integer') appendIntegerAnswer(target.parentElement, answer);
+			}
+		});
+	}
+
+	/**
+	 * @param {HTMLElement|null} target
+	 * @param {string} answer
+	 */
+	function appendIntegerAnswer(target, answer) {
+		let el = document.createElement('span');
+		el.classList.add('correct');
+		el.textContent = 'Answer: ' + answer;
+
+		target?.appendChild(el);
+	}
+
+    function finish() {
+        if (practice) return;
+
+        if (window.confirm("Do you want to FINISH this test?")) {
+            document.querySelectorAll(".qTile > input, .qTile > button")
+				//@ts-ignore
+				.forEach(el => (el.disabled = true));
+            
+            let score = 0;
+            let maxMarks = 0;
+
+            for (let si = 0; si < response_sheet.length; si++) {
+                for (let qi = 0; qi < response_sheet[si].length; qi++) {
+                    let { correct_options, answer, question_id, type, marks, negMarks } = qList[si].questions[qi];
+                    let val = response_sheet[si][qi];
+
+                    //Reveal MCQ answer
+                    document.querySelectorAll(`*[name='${question_id}']`).forEach(el => {
+                        //@ts-ignore
+						let is_c = correct_options.includes(el.value) || answer === el.value;
+                        let is_s = el.classList.contains("selected");
+                        
+                        if (is_s) el.classList.add(is_c ? "correct" : "wrong");
+                        if (is_c) el.classList.add("pcorrect");
+                    });
+            
+                    //Append Integer answer
+                    if (type === "integer") appendIntegerAnswer(
+                        document.querySelector(`#${question_id} > div.options`),
+                        answer
+                    );
+                    
+                    maxMarks += marks;
+                    
+                    if (!val?.length) continue;
+                    
+                    //Add to score
+                    if (type === "mcqm") {
+                        score += val.every(o => correct_options.includes(o))
+                            ? (correct_options.length === val.length ? marks : val.length)
+                            : -negMarks;
+                    } else {
+                        score += correct_options[0] === val[0] || answer === val[0] ? marks : -negMarks;
+                    }
+                }
+            }
+
+			//@ts-ignore
+            document.getElementById("score").textContent = `You scored ${score}/${maxMarks}`;
+			
+			Array.from(document.querySelectorAll("div.options button, div.options input"))
+				//@ts-ignore
+				.forEach(el => (el.disabled = true));
+        }
+    }
+
+	/**
+	 * @param {KeyboardEvent} e
+	*/
+	function onKeyDown(e) {
+		console.log(document.elementsFromPoint(
+			window.innerWidth*0.4,
+			window.innerHeight*0.5
+		));
+
+		switch (e.keyCode) {
+			case 38:
+				alert("UP");
+			case 40:
+				alert("DOWN");
+		}
 	}
 </script>
 
-<svelte:head>
-	<title>Test Interface</title>
-	<meta name="title" content="Test Interface" />
-</svelte:head>
+<!-- <svelte:window on:keydown={onKeyDown} /> -->
 
-<div class="container">
-	{#if !metaId || !title}
-		BROKEN URL. <a href="/pyqs">Go to PYQs</a>
-	{:else}
-		<div class="main">
+<div id="container">
+	<TopScroll to_id="string" />
+
+	<div class="test">
+		<h3>{title}</h3>
+
+		<div class="menu">
 			<div id="start"></div>
 
-			{#if !loaded}
-				<span style="font-size: 2rem;">...Loading</span>
-			{/if}
+			<p id="score"></p><br/>
 
-			<h3 class="title">
-				{title}
-			</h3>
-
-			<p id="score"></p>
-
-			<div class="menu">
-				{#each test.qList as sub}
-					<button
-						class="classic"
-						class:active={currentSub === sub.si}
-						on:click={() => (currentSub = sub.si)}
-					>
-						{sub.title}
-					</button>
-				{/each}
-
-				{#if !test.is_practice}
-					<button class="classic finishTest" on:click={finish}> FINISH </button>
-				{/if}
-			</div>
-
-			{#each test.qList as sub}
-				<div id={sub.title} class="qlist" class:visible={currentSub === sub.si}>
-					{#each sub.questions as q}
-						<QuestionTile {q} bind:test />
-					{/each}
-				</div>
+			{#each qList as sub}
+				<button
+					class="classic"
+					disabled={currentSub === sub.si}
+					on:click={() => (currentSub = sub.si)}
+				>
+					{sub.title}
+				</button>
 			{/each}
+
+			{#if !practice}
+				<button class="classic finish" on:click={finish}> FINISH </button>
+			{/if}
 		</div>
 
-		<div class="stat" class:open={menuOpen}>
-			<button class="palette" on:click={() => (menuOpen = !menuOpen)}>
-				{#if menuOpen}
-					<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
-				{:else}
-					<span> >Palette </span>
-				{/if}
-			</button>
+        <div class="qContainer">
+            {#each qList as sub}
+            <div class="qList" class:visible={currentSub === sub.si} >
+                {#each sub.questions as q}
+					<QuestionTile {q} {respond} {practice} />
+                {/each}
+            </div>
+            {/each}
+        </div>
+	</div>
 
-			<div id="palette" class="palette">
-				{#each test.response_sheet as sub, si}
-					<h3>{test.qList[si].title}</h3>
-					<div class="substat">
-						{#each sub as q, qi}
-							<a
-								style="pointer-events: initial;"
-								href={'#' + (test.qList[si].questions[qi].question_id || '')}
-								class="qstat"
-								name={`${si}_${qi}`}
-								on:click={() => {
-									currentSub = si;
-									menuOpen = false;
-								}}
-							>
-								{qi + 1}
-							</a>
-						{/each}
-					</div>
-				{/each}
-			</div>
-		</div>
-	{/if}
+	<TestStat bind:response_sheet bind:currentSub {qList} />
 </div>
 
 <style>
-	:global(div#start h2.logo) {
-		display: none;
-	}
-
-	div.container {
-		overflow: hidden;
-	}
-
-	div.main {
-		padding: 0 1rem 1rem 1rem;
+	#container {
+		display: flex;
+		flex-direction: row;
+		width: 100vw;
 		height: 100%;
-		overflow-y: scroll;
+		overflow: hidden;
+		flex-grow: 1;
+		align-items: stretch;
+	}
+	
+	div.test {
+		flex-grow: 1;
+		flex-shrink: 0;
+		flex-basis: 75vw;
+		overflow: scroll;
 		scroll-behavior: smooth;
 	}
 
-	div.main > h3 {
+	div.test > h3 {
 		padding: 2rem;
 		text-align: center;
 	}
-
+    
+	div.qList {
+		max-width: var(--md);
+		margin: 0 auto;
+		max-height: 0;
+		overflow: hidden;
+	}
+	div.qList.visible {
+		max-height: unset;
+		overflow: unset;
+		animation-name: slidein;
+		animation-duration: 0.5s;
+		animation-iteration-count: 1;
+	}
+	
 	p#score {
 		font-size: 1.2rem;
 		font-weight: 500;
@@ -181,96 +300,12 @@
 		font-weight: 500;
 		letter-spacing: 0.1rem;
 	}
-	div.menu button.active {
-		background: var(--pri);
-		transform: scale(0.95);
-	}
-
-	div.stat {
-		position: fixed;
-		width: 100vw;
-		top: 0;
-		left: 0;
-		bottom: 0;
-		z-index: 1000;
-		transform: translateX(100%);
-		background-color: #000000aa;
-		transition: all ease-out 100ms;
-	}
-	div.stat.open {
-		pointer-events: initial;
-		transform: translateX(0);
-	}
-	div.palette {
-		width: 75vw;
-		max-width: 32rem;
-		margin-left: auto;
-		padding: 2rem 0.5rem 2rem 1rem;
-		color: white;
-		box-shadow: inset 0px 2px 10px rgba(0, 0, 0, 5);
-		height: 100%;
-		overflow-y: auto;
-		pointer-events: initial;
+	div.menu button:disabled {
 		background: var(--pri);
 	}
-
-	button.palette {
-		color: white;
-		background: var(--pri);
-		padding: 0.5rem;
-		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
-		font-weight: 600;
-		position: absolute;
-		top: 4rem;
-		right: 0;
-		margin-right: 105vw;
-		pointer-events: initial;
-		cursor: pointer;
-	}
-	div.stat.open button.palette {
-		margin-right: min(80vw, 35rem);
-		transform: scale(1.5);
-	}
-
-	div.substat {
-		margin-bottom: 1rem;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		gap: 0.2rem;
-	}
-	a.qstat {
-		display: block;
-		background: var(--elevate);
-		color: white;
-		text-align: center;
-		font-size: 0.9rem;
-		width: 1.75rem;
-		height: 1.75rem;
-	}
-	:global(a.qstat.tick) {
-		background: green !important;
-	}
-
-	div.menu button.finishTest {
+	div.menu button.finish {
 		background: white;
 		color: var(--pri);
-		border: 2px solid var(--txt);
-		font-weight: bold;
-	}
-
-	div.qlist {
-		max-width: var(--md);
-		margin: 0 auto;
-		max-height: 0;
-		overflow: hidden;
-	}
-	div.qlist.visible {
-		max-height: unset;
-		overflow: unset;
-		animation-name: slidein;
-		animation-duration: 0.5s;
-		animation-iteration-count: 1;
 	}
 
 	/*996px*/
@@ -279,35 +314,16 @@
 			overflow: hidden;
 		}
 
-		div.container {
+		#container {
 			position: relative;
 			display: flex;
 			flex-direction: row;
 		}
 
-		div.main {
+		div.test {
 			flex-grow: 1;
 			flex-shrink: 0;
 			flex-basis: 75vw;
-		}
-
-		div.stat {
-			flex-shrink: 1;
-			flex-grow: 0;
-			transform: unset;
-			position: unset;
-			width: unset;
-			z-index: 1;
-		}
-		div.palette {
-			max-width: unset;
-			max-height: unset;
-			width: unset;
-			background: var(--elevate);
-		}
-
-		button.palette {
-			display: none;
 		}
 	}
 
@@ -317,31 +333,18 @@
 		--track: #6494ed5a;
 	}
 
-	div.palette,
-	div.main {
+	div.test {
 		scrollbar-width: var(--size);
 		scrollbar-color: var(--thumb) var(--track);
 	}
 
-	div.palette::-webkit-scrollbar,
-	div.main::-webkit-scrollbar {
+	div.test::-webkit-scrollbar {
 		background: var(--track);
 		width: var(--size);
 		height: var(--size);
 	}
 
-	div.palette::-webkit-scrollbar-thumb,
-	div.main::-webkit-scrollbar-thumb {
+	div.test::-webkit-scrollbar-thumb {
 		background: var(--thumb);
 	}
-
-	/*
-	scrolltop
-	#wrapper
-		header
-		______
-		.container
-			.main | .stat
-						.palette
-	*/
 </style>

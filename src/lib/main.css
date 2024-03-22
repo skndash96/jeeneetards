@@ -59,17 +59,11 @@ button {
     background: none;
     outline: none;
     border: none;
-}
-button.classic:hover {
-    transform: scale(0.9);
-    color: var(--sec);
-}
-button.classic:disabled {
-    opacity: 0.3;
+    cursor: pointer;
 }
 
 button.classic:hover {
-    transform: scale(0.9);
+    transform: scale(0.95);
     color: var(--sec);
 }
 button.classic:disabled:hover {
