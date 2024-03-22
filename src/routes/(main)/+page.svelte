@@ -1,5 +1,6 @@
-<script> 
-    let quote = "The impedement to action advances action, what stands in the way becomes the way.";
+<script>
+    export let data;
+    let { quote } = data;
 </script>
 
 <svelte:head>
@@ -9,9 +10,9 @@
 <div class="container">
     <div class="quote">
         <span>"</span>
-        <span> {quote} </span>
+        <span> {quote?.text||"The impedement to action advances action, what stands in the way becomes the way."} </span>
         <span>"</span> <br>
-        <span> - Marcus Aurelius </span>
+        <span> - {quote?.author || "Marcus Aurelius"} </span>
     </div>
 
     <section class="about sm">
@@ -63,6 +64,7 @@
     }
     div.quote {
         width: fit-content;
+        max-width: 72rem;
         margin: auto;
         font-weight: 600;
         padding: 2rem;
