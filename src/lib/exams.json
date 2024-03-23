@@ -5,9 +5,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "emb-ait1",
                 "title": "JEE Main 2024 Misc Paper 1",
                 "year": 2024
@@ -15,9 +12,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "emb-ait2",
                 "title": "JEE Main 2024 Misc Paper 2",
                 "year": 2024
@@ -74,9 +68,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "1cd11aa3-6217-54ef-bf4b-4438e2fda38c",
                 "title": "JEE Main 2024 (Online) 30th January Evening Shift",
                 "year": 2024
@@ -84,9 +75,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "2ea34c8a-2176-54fd-8a94-67c74bc80f4e",
                 "title": "JEE Main 2024 (Online) 30th January Morning Shift",
                 "year": 2024
@@ -94,9 +82,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "307e0097-c53d-56f5-a3a8-d0ec666c3540",
                 "title": "JEE Main 2024 (Online) 29th January Evening Shift",
                 "year": 2024
@@ -104,9 +89,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "fa0e21e6-7d3b-51a8-859b-10ecf50d9b75",
                 "title": "JEE Main 2024 (Online) 29th January Morning Shift",
                 "year": 2024
@@ -114,9 +96,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "2b5a57d6-27c1-5578-9009-02be012bb832",
                 "title": "JEE Main 2024 (Online) 27th January Evening Shift",
                 "year": 2024
@@ -124,9 +103,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "d64b61df-01da-581c-8b88-af23cb610edc",
                 "title": "JEE Main 2024 (Online) 27th January Morning Shift",
                 "year": 2024
@@ -343,9 +319,6 @@
             {
                 "exam": "jee-main",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "d1e21085-2808-52df-ab8b-630934b76170",
                 "title": "JEE Main 2023 (Online) 29th January Morning Shift",
                 "year": 2023
@@ -1361,9 +1334,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "36549f67-09d3-5301-9d38-46bb22e80311",
                 "title": "JEE Advanced 2023 Paper 2 Online",
                 "year": 2023
@@ -1371,9 +1341,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "0c7fae4a-3b47-5fbe-a9d3-fca8ab28c1c7",
                 "title": "JEE Advanced 2023 Paper 1 Online",
                 "year": 2023
@@ -1649,9 +1616,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "1a5ee191-3c8a-5e6f-9a93-0f355e166727",
                 "title": "IIT-JEE 2009 Paper 2 Offline",
                 "year": 2009
@@ -1659,9 +1623,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "ff8a8025-27c9-5db0-b544-41165d6dbb98",
                 "title": "IIT-JEE 2009 Paper 1 Offline",
                 "year": 2009
@@ -1669,9 +1630,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "93e7745d-c9d0-5082-8ccb-e4e309f148de",
                 "title": "IIT-JEE 2008 Paper 2 Offline",
                 "year": 2008
@@ -1679,9 +1637,6 @@
             {
                 "exam": "jee-advanced",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "2d74b9c5-f3b4-57fb-8cc2-cc1aee7e57d0",
                 "title": "IIT-JEE 2008 Paper 1 Offline",
                 "year": 2008
@@ -1695,9 +1650,6 @@
             {
                 "exam": "neet",
                 "examGroup": "medical",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "3c48616f-298a-5f69-91d2-bcd59444c455",
                 "title": "NEET 2023 Manipur",
                 "year": 2023
@@ -1705,9 +1657,6 @@
             {
                 "exam": "neet",
                 "examGroup": "medical",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "cbfbed57-d7d8-5a07-9957-478e4cb62f17",
                 "title": "NEET 2023",
                 "year": 2023
@@ -1715,9 +1664,6 @@
             {
                 "exam": "neet",
                 "examGroup": "medical",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "8dd253c6-09a8-5875-b127-a0c00a165a1b",
                 "title": "NEET 2022 Phase 2",
                 "year": 2022
@@ -1937,9 +1883,6 @@
             {
                 "exam": "bitsat",
                 "examGroup": "jee",
-                "languages": [
-                    "en"
-                ],
                 "metaId": "ff6f9a9d-403d-56cb-a711-b2e745c6c1b8",
                 "title": "BITSAT 2022",
                 "year": 2022
