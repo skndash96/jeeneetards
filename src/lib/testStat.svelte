@@ -83,13 +83,13 @@
 	}
 
 	button.palette {
-		color: white;
+		color: white !important;
 		background: var(--pri);
 		padding: 0.5rem;
 		box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
 		font-weight: 600;
 		position: absolute;
-		top: 4rem;
+		top: 5rem;
 		right: 0;
 		margin-right: 105vw;
 		pointer-events: initial;
