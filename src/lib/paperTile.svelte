@@ -1,5 +1,7 @@
 <script>
-	 export let title, metaId;
+	 export let
+	 /**@type {string}*/ title, 
+	 /**@type {string}*/ metaId;
 </script>
 
 <div class="paper">

@@ -32,5 +32,5 @@
     si: number
  }} Subject
 
- *@typedef {(string[] | null) [][]} ResponseSheet
+ *@typedef {(string[] | null) []} ResponseSheet
 */

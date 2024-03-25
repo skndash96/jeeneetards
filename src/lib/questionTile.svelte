@@ -1,23 +1,74 @@
 <script>
+	import { onMount } from "svelte";
+
 	export let
 		/**@type {Question} */q,
-		/**@type {Function}*/ respond,
+		/**@type {ResponseSheet}*/ response_sheet,
+		/**@type {boolean[]}*/ review,
 		/**@type {boolean}*/ practice;
 
 	let sol = false;
+	
+	/**
+	 *@param {Question} q
+	 *@param {EventTarget|null} t
+	 *@param {"mark-review" | "mark-answer"} type
+	 */
+	 function respond(q, t, type) {
+		if (type === "mark-review") {
+			review[q.qi] = !review[q.qi];
+		}
+		
+		else if (type === "mark-answer") {
+			let pre = response_sheet[q.qi] || [];
+			//@ts-ignore
+			let v = t.value;
+			let idx = pre.findIndex((x) => x === v);
 
+			if (idx !== -1) {
+				pre.splice(idx, 1);
+			} else {
+				if (q.type === 'mcqm') pre.push(v);
+				else pre = [v];
+			}
+
+			response_sheet[q.qi] = pre;
+			response_sheet = response_sheet;
+		}
+	}
+	
 	function toggleExplanation() {
 		sol = !sol;
+	}
+
+	/**
+	 * @param {EventTarget|null} target
+	 * @param {string} answer
+	 */
+	 function appendIntegerAnswer(target, answer) {
+		let el = document.createElement('span');
+		el.classList.add('correct');
+		el.textContent = 'Answer: ' + answer;
+
+		//@ts-ignore
+		if (target.parentElement.children.length < 2) target.parentElement.appendChild(el);
 	}
 </script>
 
 <div id={q.question_id} class="qTile">
-	<strong class="qno">
-		Question {q.qi + 1}
-		{#if q.type === 'mcqm'}
-			<span style="margin-left: 1rem; font-size: 0.8rem; opacity: 0.8;"> (Multiple ans) </span>
-		{/if}
-	</strong>
+	<div class="info">
+		<strong class="qno">
+			Question {q.qi + 1}
+			{#if q.type === 'mcqm'}
+				<span style="margin-left: 1rem; font-size: 0.8rem; opacity: 0.8;"> (Multiple ans) </span>
+			{/if}
+		</strong>
+
+		<button on:click={({ target }) => respond(q,target,"mark-review")} >
+			Review Later
+		</button>
+	</div>
+
 	<p>
 		{#if q.direction}
 			{@html q.direction}
@@ -32,22 +83,32 @@
 
 	<div class="options">
 		{#if q.type == 'integer'}
+			{@const response = response_sheet[q.qi]}
 			<input
 				name={q.question_id}
 				style="colspan: 2;"
 				type="number"
+				class:selected={!!response?.[0]}
+				class:correct={practice && q.answer === response?.[0]}
+				class:wrong={practice && q.answer !== response?.[0]}
+				value={response?.[0]}
 				placeholder="Answer here"
-				on:change={({ target }) => respond(q, target)}
+				on:change={({ target }) => respond(q, target, "mark-answer")}
+				on:change={({ target }) => appendIntegerAnswer(target, q.answer)}
 			/>
 		{:else}
-			{#each q.options as opt}
+			{@const response = response_sheet[q.qi]}
+			{#each q.options as {identifier, content}}
 				<button
 					name={q.question_id}
-					value={opt.identifier}
-					on:click={({ target }) => respond(q, target)}
+					class:selected={response?.includes(identifier)}
+					class:correct={practice && q.correct_options.includes(identifier)}
+					class:wrong={practice && response?.includes(identifier) && q.correct_options.includes(identifier)}
+					value={identifier}
+					on:click={({ target }) => respond(q, target, "mark-answer")}
 				>
-					<span>{opt.identifier}</span>
-					{@html opt.content}
+					<span style="background-color: lightgrey; font-weight: 600; color: black; padding: .1rem;">{identifier}</span>
+					{@html content}
 				</button>
 			{/each}
 		{/if}
@@ -68,12 +129,23 @@
 
 <style>
 	div.qTile {
-		padding: 10rem 0.5rem 0 0.5rem;
-		margin-top: -5rem;
+		padding: 0 2rem 10rem 1rem;
+		width: fit-content;
+		min-width: 60vw;
+		margin: auto;
 	}
-	div.qTile .qno {
+
+	div.info {
+		display: flex;
+		justify-content: space-between; 
+	}
+	div.info button {
+		color: var(--ter);
+	}
+	div.info .qno {
 		font-size: 1.25rem;
 	}
+
 	div.options {
 		display: grid;
 		grid-template-columns: 1fr 1fr;

@@ -14,33 +14,39 @@ export async function load({ url, fetch }) {
          * @type {Subject[]} 
          */
         let qList = await res.json();
+
+        let qi = 0;
+
+        /**
+         * Cumulative Subject Length - Used to find subject using qi.
+         * @type number[]
+         */
+        let csl = qList.reduce((/**@type {number[]}*/acc,s,i) => {
+            acc.push((acc[acc.length-1] || 0) + s.questions.length);
+            return acc;
+        }, []);
+        
         qList.map((s,si) => {
             s.si = si;
             
-            s.questions = s.questions.map((q,qi) => {
-                q.qi = qi;
+            s.questions = s.questions.map(q => {
                 q.si = si;
+                q.qi = qi;
+
+                qi += 1;
+
                 return q;
             });
 
             return s;
         });
 
-        // let lastResponse;
-        // if (browser) {
-        //     lastResponse = window.localStorage.getItem("lastResponse");
-        //     lastResponse = lastResponse && JSON.parse(lastResponse);
-
-        //     if (!lastResponse || !lastResponse.length) {
-        //         lastResponse = null;
-        //     }
-        // }
-
         return {
             metaId,
             title,
             practice: !!practice,
-            qList
+            qList,
+            csl
         };
     }
 

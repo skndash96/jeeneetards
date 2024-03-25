@@ -5,10 +5,7 @@
 </script>
 
 <div id="wrapper">
-    <TopScroll to_id="start" />
-
     <Header />
-    
     <slot />
 </div>
 

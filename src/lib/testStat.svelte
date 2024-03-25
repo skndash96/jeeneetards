@@ -1,16 +1,17 @@
 <script>
-	export let
-        /**@type {ResponseSheet} */ response_sheet,
-        /**@type {Subject[]} */ qList,
-        /**@type {number} */ currentSub;
-
-    let menuOpen = false;
+	export let /**@type {ResponseSheet} */ response_sheet,
+		/**@type {Subject[]} */ qList,
+		/**@type {function}*/ set_qi,
+		/**@type {boolean[]}*/ review;
 	
+	let menuOpen = false;
+
 	/**
-	 * @param {string[]|null} res
+	 * @param {number} qi
+	 * @returns {boolean}
 	 */
-	 function check_stat(res) {
-		return res && res[0]?.length > 0 ? true : false;
+	function check_stat(qi) {
+		return !!response_sheet[qi]?.length;
 	}
 </script>
 
@@ -19,27 +20,29 @@
 		{#if menuOpen}
 			<strong style="display: inline-block; transform: rotate(45deg);">+</strong>
 		{:else}
-			<span> >Palette </span>
+			<span> &gt;Palette </span>
 		{/if}
 	</button>
 
 	<div id="palette" class="palette">
-		{#each response_sheet as sub, si}
-			<h3>{qList[si].title}</h3>
+		{#each qList as sub, si}
+			<h3>{sub.title}</h3>
 			<div class="substat">
-				{#each sub as res, qi}
-					<a
+				{#each sub.questions as { qi }}
+					{#key response_sheet[qi]}
+					<button
 						style="pointer-events: initial;"
-						href={'#' + (qList[si].questions[qi].question_id || '')}
 						class="qstat"
-						class:tick={check_stat(res)}
+						class:tick={check_stat(qi)}
+						class:review={review[qi]}
 						on:click={() => {
-							currentSub = si;
 							menuOpen = false;
+							set_qi(qi);
 						}}
 					>
 						{qi + 1}
-					</a>
+					</button>
+					{/key}
 				{/each}
 			</div>
 		{/each}
@@ -47,7 +50,7 @@
 </div>
 
 <style>
-    #stat {
+	#stat {
 		position: fixed;
 		width: 100vw;
 		top: 0;
@@ -107,7 +110,7 @@
 		flex-wrap: wrap;
 		gap: 0.2rem;
 	}
-	a.qstat {
+	button.qstat {
 		display: block;
 		background: var(--elevate);
 		color: white;
@@ -115,12 +118,26 @@
 		font-size: 0.9rem;
 		width: 1.75rem;
 		height: 1.75rem;
+		position: relative;
 	}
-	:global(a.qstat.tick) {
+	:global(button.qstat.tick) {
 		background: green !important;
 	}
+	:global(button.qstat.review) {
+		background: blueviolet !important;
+	}
+	:global(button.qstat.review.tick::before) {
+		content: "";
+		width: .5rem;
+		height: .5rem;
+		border-radius: 100%;
+		background: lightgreen;
+		z-index: 2;
+		position: absolute;
+		bottom: 0;
+		right: 0;
+	}
 
-    
 	/*996px*/
 	@media (min-width: 996px) {
 		#stat {
@@ -131,7 +148,7 @@
 			width: unset;
 			z-index: 1;
 		}
-        
+
 		div.palette {
 			max-width: unset;
 			max-height: unset;

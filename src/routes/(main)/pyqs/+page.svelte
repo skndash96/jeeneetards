@@ -1,4 +1,5 @@
 <script>
+	// @ts-nocheck
 	import PaperTile from '$lib/paperTile.svelte';
 	import exams from '$lib/exams.json';
 </script>

@@ -3,25 +3,26 @@
 	import './typedef';
 	import TestStat from '$lib/testStat.svelte';
 	import QuestionTile from '$lib/questionTile.svelte';
-	import TopScroll from '$lib/topScroll.svelte';
 
 	export let data;
 
 	let loaded = false,
-		menuOpen = false,
-		currentSub = 0;
-    
-	let {
-        metaId,
-        title,
-        practice,
-        qList
-    } = data;
+		currentSub = 0,
+		currentQ = 0;
+
+	let { metaId, title, practice, qList, csl } = data;
+
+	const TOTAL_QS = csl[csl.length - 1];
 
 	/**
 	 * @type {ResponseSheet}
 	 */
-	let response_sheet = qList.map((sub) => Array(sub.questions.length).fill(null));
+	let response_sheet = new Array(TOTAL_QS).fill(null);
+
+	/**
+	 * @type {boolean[]}
+	 */
+	let review = new Array(TOTAL_QS).fill(false);
 
 	onMount(async () => {
 		//@ts-ignore
@@ -66,156 +67,122 @@
 	});
 
 	/**
-	 *@param {Question} q
-	 *@param {HTMLInputElement} t
+	 * @param {number} qi
 	 */
-	function respond(q, t) {
-		let pre = response_sheet[q.si][q.qi] || [];
-		let v = t.value;
-		let idx = pre.findIndex((x) => x === v);
+	function set_qi(qi) {
+		let si = csl.findIndex((l) => l > qi);
 
-		if (idx !== -1) {
-			pre.splice(idx, 1);
-		} else {
-			if (q.type === 'mcqm') pre.push(v);
-			else pre = [v];
-		}
+		if (si === -1) return;
 
-		update_stat(q, pre, t);
+		currentQ = qi;
+		currentSub = si;
 	}
 
 	/**
-	 * @param {Question} q
-	 * @param {string[] | null} to
-	 * @param {HTMLInputElement} target
+	 * @param {number} qi
+	 * @returns {Question}
 	 */
-	function update_stat({ si, qi, type, answer, correct_options }, to, target) {
-		response_sheet[si][qi] = to;
-		response_sheet = response_sheet;
+	function get_q(qi) {
+		let si = csl.findIndex((l) => l > qi);
+		let new_qi = qi - (csl[si - 1] || 0);
 
-		target.parentElement?.querySelectorAll(`*[name='${target.name}']`).forEach((el) => {
-			// @ts-ignore
-			if (el.value && to.includes(el.value)) el.classList.add('selected');
-			else el.classList.remove('selected', 'correct', 'wrong');
-
-			// @ts-ignore
-			if (practice && to.includes(el.value)) {
-				// @ts-ignore
-				correct_options.includes(el.value) || answer === el.value
-					? el.classList.add('correct')
-					: el.classList.add('wrong');
-
-				if (type === 'integer') appendIntegerAnswer(target.parentElement, answer);
-			}
-		});
+		return qi >= 0 ? qList[si].questions[new_qi] : qList[si].questions[qi];
 	}
 
-	/**
-	 * @param {HTMLElement|null} target
-	 * @param {string} answer
-	 */
-	function appendIntegerAnswer(target, answer) {
-		let el = document.createElement('span');
-		el.classList.add('correct');
-		el.textContent = 'Answer: ' + answer;
-
-		target?.appendChild(el);
+	function next() {
+		set_qi(currentQ + 1);
+	}
+	function previous() {
+		set_qi(currentQ - 1);
 	}
 
-    function finish() {
-        if (practice) return;
+	function finish() {
+		if (practice) return;
 
-        if (window.confirm("Do you want to FINISH this test?")) {
-            document.querySelectorAll(".qTile > input, .qTile > button")
+		if (window.confirm('Do you want to FINISH this test?')) {
+			document
+				.querySelectorAll('.qTile > input, .qTile > button')
 				//@ts-ignore
-				.forEach(el => (el.disabled = true));
-            
-            let score = 0;
-            let maxMarks = 0;
+				.forEach((el) => (el.disabled = true));
 
-            for (let si = 0; si < response_sheet.length; si++) {
-                for (let qi = 0; qi < response_sheet[si].length; qi++) {
-                    let { correct_options, answer, question_id, type, marks, negMarks } = qList[si].questions[qi];
-                    let val = response_sheet[si][qi];
+			let score = 0;
+			let maxMarks = 0;
 
-                    //Reveal MCQ answer
-                    document.querySelectorAll(`*[name='${question_id}']`).forEach(el => {
-                        //@ts-ignore
-						let is_c = correct_options.includes(el.value) || answer === el.value;
-                        let is_s = el.classList.contains("selected");
-                        
-                        if (is_s) el.classList.add(is_c ? "correct" : "wrong");
-                        if (is_c) el.classList.add("pcorrect");
-                    });
-            
-                    //Append Integer answer
-                    if (type === "integer") appendIntegerAnswer(
-                        document.querySelector(`#${question_id} > div.options`),
-                        answer
-                    );
-                    
-                    maxMarks += marks;
-                    
-                    if (!val?.length) continue;
-                    
-                    //Add to score
-                    if (type === "mcqm") {
-                        score += val.every(o => correct_options.includes(o))
-                            ? (correct_options.length === val.length ? marks : val.length)
-                            : -negMarks;
-                    } else {
-                        score += correct_options[0] === val[0] || answer === val[0] ? marks : -negMarks;
-                    }
-                }
-            }
+			for (let qi = 0; qi < response_sheet.length; qi++) {
+				let { correct_options, answer, question_id, type, marks, negMarks } = get_q(qi);
+				let val = response_sheet[qi];
+
+				//Reveal MCQ answer
+				document.querySelectorAll(`*[name='${question_id}']`).forEach((el) => {
+					//@ts-ignore
+					let is_c = correct_options.includes(el.value) || answer === el.value;
+					let is_s = el.classList.contains('selected');
+
+					if (is_s) el.classList.add(is_c ? 'correct' : 'wrong');
+					if (is_c) el.classList.add('pcorrect');
+				});
+
+				// //Append Integer answer
+				// if (type === 'integer')
+				// 	appendIntegerAnswer(document.querySelector(`#${question_id} > div.options`), answer);
+
+				maxMarks += marks;
+
+				if (!val?.length) continue;
+
+				//Add to score
+				if (type === 'mcqm') {
+					score += val.every((o) => correct_options.includes(o))
+						? correct_options.length === val.length
+							? marks
+							: val.length
+						: -negMarks;
+				} else {
+					score += correct_options[0] === val[0] || answer === val[0] ? marks : -negMarks;
+				}
+			}
 
 			//@ts-ignore
-            document.getElementById("score").textContent = `You scored ${score}/${maxMarks}`;
-			
-			Array.from(document.querySelectorAll("div.options button, div.options input"))
+			document.getElementById('score').textContent = `You scored ${score}/${maxMarks}`;
+
+			Array.from(document.querySelectorAll('div.options button, div.options input'))
 				//@ts-ignore
-				.forEach(el => (el.disabled = true));
-        }
-    }
+				.forEach((el) => (el.disabled = true));
+		}
+	}
 </script>
 
 <div id="container">
 	<div class="test">
 		<h3>{title}</h3>
 
-		<p id="score"></p><br/>
+		<p id="score"></p>
 
-		<div class="menu">
-			<div id="start"></div>
+		{#if !practice}
+			<button class="classic finish" on:click={finish}> FINISH </button>
+		{/if}
 
-
-			{#each qList as sub}
-				<button
-					class="classic"
-					disabled={currentSub === sub.si}
-					on:click={() => (currentSub = sub.si)}
-				>
-					{sub.title}
-				</button>
-			{/each}
-
-			{#if !practice}
-				<button class="classic finish" on:click={finish}> FINISH </button>
-			{/if}
+		<div class="qContainer">
+			{#key currentQ}
+				<QuestionTile
+					q={get_q(currentQ)}
+					bind:response_sheet={response_sheet}
+					bind:review={review}
+					{practice}
+				/>
+			{/key}
 		</div>
 
-        <div class="qContainer">
-            {#each qList as sub}
-            <div class="qList" class:visible={currentSub === sub.si} >
-                {#each sub.questions as q}
-					<QuestionTile {q} {respond} {practice} />
-                {/each}
-            </div>
-            {/each}
-        </div>
+		<div class="navigation">
+			<button style="background: none; color: var(--ter);" class="finish" on:click={next}>submit</button>
+			<group>
+				<button disabled={currentQ===0} on:click={previous}>previous</button>
+				<button disabled={currentQ===TOTAL_QS} on:click={next}>Next</button>
+			</group>
+		</div>
 	</div>
 
-	<TestStat bind:response_sheet bind:currentSub {qList} />
+	<TestStat bind:review bind:response_sheet {set_qi} {qList} />
 </div>
 
 <style>
@@ -228,38 +195,25 @@
 		flex-grow: 1;
 		align-items: stretch;
 	}
-	
-	div#start {
-		margin-top: -5rem;
-		padding-top: 5rem;
-	}
+
 	div.test {
 		flex-grow: 1;
 		flex-shrink: 0;
 		flex-basis: 75vw;
-		overflow: scroll;
-		scroll-behavior: smooth;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
 	}
 
 	div.test > h3 {
 		padding: 2rem 2rem 0 2rem;
 		text-align: center;
 	}
-    
-	div.qList {
-		max-width: var(--md);
-		margin: 0 auto;
-		max-height: 0;
-		overflow: hidden;
+
+	div.test div.qContainer {
+		flex-grow: 1;
+		overflow: scroll;
 	}
-	div.qList.visible {
-		max-height: unset;
-		overflow: unset;
-		animation-name: slidein;
-		animation-duration: 0.5s;
-		animation-iteration-count: 1;
-	}
-	
 	p#score {
 		font-size: 1.2rem;
 		font-weight: 500;
@@ -269,28 +223,24 @@
 		background: var(--highlight);
 	}
 
-	div.menu {
-		display: flex;
-		margin-top: 2rem;
-		padding: .5rem;
-		flex-wrap: wrap;
-		margin: auto;
-		width: fit-content;
-	}
-	div.menu button {
+	div.navigation button {
 		padding: 0.5rem;
-		margin: 0.25rem;
 		background: var(--sec);
 		color: white;
 		font-weight: 500;
 		letter-spacing: 0.1rem;
 	}
-	div.menu button:disabled {
-		background: var(--pri);
+
+	div.navigation {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-between;
+		background: var(--bg);
+		margin: 0.5rem 0;
+		padding: 1rem;
 	}
-	div.menu button.finish {
-		background: white;
-		color: var(--pri);
+	div.navigation button {
+		margin: 0 1rem;
 	}
 
 	/*996px*/
