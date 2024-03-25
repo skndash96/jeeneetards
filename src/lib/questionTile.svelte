@@ -5,8 +5,10 @@
 		/**@type {Question} */q,
 		/**@type {ResponseSheet}*/ response_sheet,
 		/**@type {boolean[]}*/ review,
-		/**@type {boolean}*/ practice;
-
+		/**@type {boolean}*/ practice,
+		/**@type {boolean}*/ is_test_and_over;
+	
+	let reveal = practice || is_test_and_over;
 	let sol = false;
 	
 	/**
@@ -83,28 +85,33 @@
 
 	<div class="options">
 		{#if q.type == 'integer'}
-			{@const response = response_sheet[q.qi]}
+			{@const v = response_sheet[q.qi]?.[0]}
 			<input
 				name={q.question_id}
 				style="colspan: 2;"
 				type="number"
-				class:selected={!!response?.[0]}
-				class:correct={practice && q.answer === response?.[0]}
-				class:wrong={practice && q.answer !== response?.[0]}
-				value={response?.[0]}
+				class:selected={!!v}
+				class:correct={reveal && q.answer === v}
+				class:wrong={reveal && v && q.answer !== v}
+				value={v}
+				disabled={is_test_and_over}
 				placeholder="Answer here"
 				on:change={({ target }) => respond(q, target, "mark-answer")}
-				on:change={({ target }) => appendIntegerAnswer(target, q.answer)}
+				on:change={({ target }) => is_test_and_over && appendIntegerAnswer(target, q.answer)}
 			/>
 		{:else}
-			{@const response = response_sheet[q.qi]}
 			{#each q.options as {identifier, content}}
+				{@const is_selected = response_sheet[q.qi]?.includes(identifier)}
+				{@const is_correct = q.correct_options.includes(identifier)}
+				
 				<button
 					name={q.question_id}
-					class:selected={response?.includes(identifier)}
-					class:correct={practice && q.correct_options.includes(identifier)}
-					class:wrong={practice && response?.includes(identifier) && q.correct_options.includes(identifier)}
+					class:selected={is_selected}
+					class:correct={reveal && is_selected && is_correct}
+					class:wrong={reveal && is_selected && !is_correct}
+					class:pcorrect={is_test_and_over && is_correct}
 					value={identifier}
+					disabled={is_test_and_over}
 					on:click={({ target }) => respond(q, target, "mark-answer")}
 				>
 					<span style="background-color: lightgrey; font-weight: 600; color: black; padding: .1rem;">{identifier}</span>
@@ -114,7 +121,7 @@
 		{/if}
 	</div>
 
-	<button class="explanation" class:test={!practice} on:click={toggleExplanation}>
+	<button class="explanation" class:show={reveal} on:click={toggleExplanation}>
 		{#if sol} &lt;
 		{:else} &gt;
 		{/if}
@@ -122,6 +129,7 @@
 	</button>
 	
 	<p class="explanation" class:show={sol}>
+		ANSWER: "{q.answer}" <br/>
 		Solution:
 		{@html q.explanation || "Currently not available."}
 	</p>

@@ -8,7 +8,8 @@
 
 	let loaded = false,
 		currentSub = 0,
-		currentQ = 0;
+		currentQ = 0,
+		reveal_ans = false;
 
 	let { metaId, title, practice, qList, csl } = data;
 
@@ -112,20 +113,6 @@
 				let { correct_options, answer, question_id, type, marks, negMarks } = get_q(qi);
 				let val = response_sheet[qi];
 
-				//Reveal MCQ answer
-				document.querySelectorAll(`*[name='${question_id}']`).forEach((el) => {
-					//@ts-ignore
-					let is_c = correct_options.includes(el.value) || answer === el.value;
-					let is_s = el.classList.contains('selected');
-
-					if (is_s) el.classList.add(is_c ? 'correct' : 'wrong');
-					if (is_c) el.classList.add('pcorrect');
-				});
-
-				// //Append Integer answer
-				// if (type === 'integer')
-				// 	appendIntegerAnswer(document.querySelector(`#${question_id} > div.options`), answer);
-
 				maxMarks += marks;
 
 				if (!val?.length) continue;
@@ -144,10 +131,8 @@
 
 			//@ts-ignore
 			document.getElementById('score').textContent = `You scored ${score}/${maxMarks}`;
-
-			Array.from(document.querySelectorAll('div.options button, div.options input'))
-				//@ts-ignore
-				.forEach((el) => (el.disabled = true));
+			
+			reveal_ans = true;
 		}
 	}
 </script>
@@ -158,23 +143,20 @@
 
 		<p id="score"></p>
 
-		{#if !practice}
-			<button class="classic finish" on:click={finish}> FINISH </button>
-		{/if}
-
 		<div class="qContainer">
 			{#key currentQ}
 				<QuestionTile
 					q={get_q(currentQ)}
 					bind:response_sheet={response_sheet}
 					bind:review={review}
+					is_test_and_over={reveal_ans}
 					{practice}
 				/>
 			{/key}
 		</div>
 
 		<div class="navigation">
-			<button style="background: none; color: var(--ter);" class="finish" on:click={next}>submit</button>
+			<button style="background: none; color: var(--ter);" class="finish" on:click={finish}>submit</button>
 			<group>
 				<button disabled={currentQ===0} on:click={previous}>previous</button>
 				<button disabled={currentQ===TOTAL_QS} on:click={next}>Next</button>
