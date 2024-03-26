@@ -26,6 +26,8 @@
 	let review = new Array(TOTAL_QS).fill(false);
 
 	onMount(async () => {
+		loadTest();
+
 		//@ts-ignore
 		window.MathJax = {
 			tex: {
@@ -137,13 +139,17 @@
 
 		localStorage.setItem(metaId, test);
 	}
+	
 	function loadTest() {
-		let test = localStorage.getItem(metaId);
+		let str = localStorage.getItem(metaId);
+		
+		/**@type {Test|null}*/
+		let test = str ? JSON.parse(str) : null;
 
-		if (test && typeof test === "object" && window.confirm(`Would you like to resume the ${test.practice ? "PRACTICE" : "TEST"} session previously saved?`)) {
+		if (test && window.confirm(`Would you like to resume the ${test.practice ? "PRACTICE" : "TEST"} session previously saved?`)) {
 			review = test.review;
 			response_sheet = test.response_sheet;
-			practice = practice;
+			practice = test.practice;
 		}
 	}
 
@@ -166,6 +172,7 @@
 	}
 </script>
 
+<svelte:document on:visibilitychange={saveTest} />
 <svelte:window on:keyup={handleKeyUp} />
 
 <div id="container">
@@ -173,6 +180,7 @@
 		<p id="score"></p>
 
 		<div class="qContainer">
+			{#if loaded}
 			{#key currentQ}
 				<QuestionTile
 					q={get_q(currentQ)}
@@ -182,6 +190,7 @@
 					{practice}
 				/>
 			{/key}
+			{/if}
 		</div>
 
 		<div class="navigation">

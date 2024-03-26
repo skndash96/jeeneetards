@@ -87,6 +87,7 @@
 
 	div.new {
 		float: right;
+		color: #ddd;
 	}
 
 	div.index ol {

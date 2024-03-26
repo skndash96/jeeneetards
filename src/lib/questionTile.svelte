@@ -15,7 +15,6 @@
 		try {
 			//@ts-ignore
 			await window.MathJax.typesetPromise(document.getElementsByClassName("qTile"));
-			console.log("TYPESETTED");
 		} catch (e) {
 			console.error('TYPESET Failed', e);
 		}
