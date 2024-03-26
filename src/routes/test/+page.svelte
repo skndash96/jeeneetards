@@ -51,17 +51,8 @@
 
 		document.head.append(script);
 
-		script.addEventListener('load', async () => {
-			let qs = Array.from(document.querySelectorAll('div.qTile'));
-
-			try {
-				//@ts-ignore
-				await window.MathJax.typesetPromise(qs);
-
-				loaded = true;
-			} catch (e) {
-				console.error('TYPESET Failed', e);
-			}
+		script.addEventListener('load', () => {
+			loaded = true;
 		});
 
 		return;
@@ -91,10 +82,10 @@
 	}
 
 	function next() {
-		set_qi(currentQ + 1);
+		if (currentQ + 1 !== csl[csl.length-1]) set_qi(currentQ + 1);
 	}
 	function previous() {
-		set_qi(currentQ - 1);
+		if (currentQ !== 0) set_qi(currentQ - 1);
 	}
 
 	function finish() {
@@ -135,12 +126,50 @@
 			reveal_ans = true;
 		}
 	}
+
+	function saveTest() {
+		//Review, Response_sheet, metaId, title, practice
+		let test = JSON.stringify({
+			review,
+			response_sheet,
+			practice
+		});
+
+		localStorage.setItem(metaId, test);
+	}
+	function loadTest() {
+		let test = localStorage.getItem(metaId);
+
+		if (test && typeof test === "object" && window.confirm(`Would you like to resume the ${test.practice ? "PRACTICE" : "TEST"} session previously saved?`)) {
+			review = test.review;
+			response_sheet = test.response_sheet;
+			practice = practice;
+		}
+	}
+
+	/**
+	 * @param {KeyboardEvent} e
+	 */
+	function handleKeyUp(e) {
+		switch (e.key) {
+			case "ArrowRight":
+				return next();
+			case "ArrowLeft":
+				return previous();
+			case "Delete":
+				response_sheet[currentQ] = null;
+				return;
+			case "r":
+				review[currentQ] = !review[currentQ];
+				return;
+		};
+	}
 </script>
+
+<svelte:window on:keyup={handleKeyUp} />
 
 <div id="container">
 	<div class="test">
-		<h3>{title}</h3>
-
 		<p id="score"></p>
 
 		<div class="qContainer">
@@ -159,12 +188,12 @@
 			<button style="background: none; color: var(--ter);" class="finish" on:click={finish}>submit</button>
 			<group>
 				<button disabled={currentQ===0} on:click={previous}>previous</button>
-				<button disabled={currentQ===TOTAL_QS} on:click={next}>Next</button>
+				<button disabled={currentQ+1===TOTAL_QS} on:click={next}>Next</button>
 			</group>
 		</div>
 	</div>
 
-	<TestStat bind:review bind:response_sheet {set_qi} {qList} />
+	<TestStat bind:review bind:response_sheet bind:currentQ {set_qi} {qList} />
 </div>
 
 <style>
@@ -185,16 +214,13 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-	}
-
-	div.test > h3 {
-		padding: 2rem 2rem 0 2rem;
-		text-align: center;
+		width: 100vw;
+		padding: 1rem;
 	}
 
 	div.test div.qContainer {
 		flex-grow: 1;
-		overflow: scroll;
+		overflow-x: scroll;
 	}
 	p#score {
 		font-size: 1.2rem;
@@ -219,10 +245,12 @@
 		justify-content: space-between;
 		background: var(--bg);
 		margin: 0.5rem 0;
-		padding: 1rem;
 	}
 	div.navigation button {
 		margin: 0 1rem;
+	}
+	div.navigation button:disabled {
+		opacity: .8;
 	}
 
 	/*996px*/
@@ -241,6 +269,7 @@
 			flex-grow: 1;
 			flex-shrink: 0;
 			flex-basis: 75vw;
+			width: auto;
 		}
 	}
 

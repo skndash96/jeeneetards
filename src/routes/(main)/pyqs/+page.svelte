@@ -11,6 +11,17 @@
 </svelte:head>
 
 <div class="container">
+	<div class="new">
+		<h3> New </h3>
+		<ul>
+			<li>Use Keybindings to navigate through questions.</li>
+			<li>ArrowRight -> Next Question</li>
+			<li>ArrowLeft -> Previous Question</li>
+			<li>Letter "r" -> Mark for Review</li>
+			<li>Delete button -> Clear Response</li>
+		</ul>
+	</div>
+
 	<h2>Index</h2>
 
 	<div class="index">
@@ -72,6 +83,10 @@
 		padding: 2rem;
 		max-width: var(--lg);
 		margin: 0 auto;
+	}
+
+	div.new {
+		float: right;
 	}
 
 	div.index ol {

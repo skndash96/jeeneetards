@@ -1,11 +1,13 @@
 <script>
 	import Header from "$lib/header.svelte";
-    import "$lib/main.css"
-	import TopScroll from "$lib/topScroll.svelte";
+    import { page } from '$app/stores';
+    import "$lib/main.css";
+
+    let title = $page.url.searchParams.get("title");
 </script>
 
 <div id="wrapper">
-    <Header />
+    <Header {title}/>
     <slot />
 </div>
 

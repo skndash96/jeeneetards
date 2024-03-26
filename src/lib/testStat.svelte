@@ -2,7 +2,8 @@
 	export let /**@type {ResponseSheet} */ response_sheet,
 		/**@type {Subject[]} */ qList,
 		/**@type {function}*/ set_qi,
-		/**@type {boolean[]}*/ review;
+		/**@type {boolean[]}*/ review,
+		/**@type {number}*/ currentQ;
 	
 	let menuOpen = false;
 
@@ -35,6 +36,7 @@
 						class="qstat"
 						class:tick={check_stat(qi)}
 						class:review={review[qi]}
+						class:selected={qi===currentQ}
 						on:click={() => {
 							menuOpen = false;
 							set_qi(qi);
@@ -125,6 +127,9 @@
 	}
 	:global(button.qstat.review) {
 		background: blueviolet !important;
+	}
+	:global(button.qstat.selected) {
+		border: 3px solid cyan;
 	}
 	:global(button.qstat.review.tick::before) {
 		content: "";

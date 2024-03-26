@@ -1,5 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
+	
+	export let /**@type {string|null}*/title;
 
 	let darkmode = false;
 
@@ -31,7 +33,9 @@
 			/>
 		</div>
 		<h2 class="heading">
-			<a href="/"> r/JEENEETards </a>
+			{#if title} <span> {title} </span>
+			{:else} <a href="/"> r/JEENEETards </a>
+			{/if}
 		</h2>
 	</div>
 

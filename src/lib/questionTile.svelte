@@ -11,6 +11,16 @@
 	let reveal = practice || is_test_and_over;
 	let sol = false;
 	
+	onMount(async () => {
+		try {
+			//@ts-ignore
+			await window.MathJax.typesetPromise(document.getElementsByClassName("qTile"));
+			console.log("TYPESETTED");
+		} catch (e) {
+			console.error('TYPESET Failed', e);
+		}
+	});
+
 	/**
 	 *@param {Question} q
 	 *@param {EventTarget|null} t
@@ -42,19 +52,6 @@
 	function toggleExplanation() {
 		sol = !sol;
 	}
-
-	/**
-	 * @param {EventTarget|null} target
-	 * @param {string} answer
-	 */
-	 function appendIntegerAnswer(target, answer) {
-		let el = document.createElement('span');
-		el.classList.add('correct');
-		el.textContent = 'Answer: ' + answer;
-
-		//@ts-ignore
-		if (target.parentElement.children.length < 2) target.parentElement.appendChild(el);
-	}
 </script>
 
 <div id={q.question_id} class="qTile">
@@ -67,7 +64,11 @@
 		</strong>
 
 		<button on:click={({ target }) => respond(q,target,"mark-review")} >
-			Review Later
+			{#if review[q.qi]}
+				Unmark Review
+			{:else}
+				Review Later
+			{/if}
 		</button>
 	</div>
 
@@ -97,8 +98,10 @@
 				disabled={is_test_and_over}
 				placeholder="Answer here"
 				on:change={({ target }) => respond(q, target, "mark-answer")}
-				on:change={({ target }) => is_test_and_over && appendIntegerAnswer(target, q.answer)}
 			/>
+			{#if is_test_and_over || (practice && !!v)}
+				<span class="correct">Answer: {q.answer}</span>
+			{/if}
 		{:else}
 			{#each q.options as {identifier, content}}
 				{@const is_selected = response_sheet[q.qi]?.includes(identifier)}
@@ -137,15 +140,13 @@
 
 <style>
 	div.qTile {
-		padding: 0 2rem 10rem 1rem;
-		width: fit-content;
-		min-width: 60vw;
-		margin: auto;
+		padding: 0 2rem 2rem 1rem;
 	}
 
 	div.info {
 		display: flex;
-		justify-content: space-between; 
+		justify-content: start;
+		gap: 1rem; 
 	}
 	div.info button {
 		color: var(--ter);
@@ -160,10 +161,9 @@
 		grid-template-rows: 1fr 1fr;
 		place-items: center;
 		gap: .5rem;
-		margin: .5rem 0;
+		margin: 1rem 0;
 	}
 
-	
 	div.options button::after {
 		content: '';
 		position: absolute;
@@ -172,6 +172,10 @@
 		right: 0;
 		bottom: 0;
 		cursor: pointer;
+	}
+
+	div.qTile *  {
+		font-size: .9rem !important;
 	}
 
 	div.options button {
@@ -206,14 +210,16 @@
 
 	button.explanation {
 		color: var(--txt);
+		display: none;
 	}
 	button.explanation:hover {
 		color: var(--sec);
 	}
 
-	button.test.explanation {
-		display: none;
+	button.explanation.show {
+		display: block;
 	}
+
 	:global(div.qTile.explain button.test.explanation) {
 		display: block;
 	}
