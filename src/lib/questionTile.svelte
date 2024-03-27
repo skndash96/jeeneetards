@@ -131,7 +131,7 @@
 	</button>
 	
 	<p class="explanation" class:show={sol}>
-		ANSWER: "{q.answer}" <br/>
+		ANSWER: "{q.answer || q.correct_options.join(", ")}" <br/>
 		Solution:
 		{@html q.explanation || "Currently not available."}
 	</p>
