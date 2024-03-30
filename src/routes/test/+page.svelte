@@ -9,7 +9,9 @@
 	let loaded = false,
 		currentSub = 0,
 		currentQ = 0,
-		reveal_ans = false;
+		reveal_ans = false,
+		time = 0,
+		/**@type {number|null}*/ timer = null;
 
 	let { metaId, title, practice, qList, csl } = data;
 
@@ -129,12 +131,25 @@
 		}
 	}
 
+	function sec() {
+		time += 1;
+	}
+	
 	function saveTest() {
+		if (timer !== null && document.visibilityState === "hidden") {
+			clearInterval(timer);
+			console.log("STOPPING TIMER", timer, time);
+		} else {
+			timer = setInterval(sec, 1000);
+			console.log("STARTING TIMER", timer, time);
+		}
+
 		//Review, Response_sheet, metaId, title, practice
 		let test = JSON.stringify({
 			review,
 			response_sheet,
-			practice
+			practice,
+			time
 		});
 
 		localStorage.setItem(metaId, test);
@@ -150,7 +165,10 @@
 			review = test.review;
 			response_sheet = test.response_sheet;
 			practice = test.practice;
+			time = test.time || time;
 		}
+
+		saveTest();
 	}
 
 	/**
@@ -178,6 +196,14 @@
 <div id="container">
 	<div class="test">
 		<p id="score"></p>
+
+		<p id="time">
+			{#key time}
+				<span>
+					{Math.floor(time/3600)}h:{Math.floor(time/60) % 60}m:{time % 60}s
+				</span>
+			{/key}
+		</p>
 
 		<div class="qContainer">
 			{#if loaded}
@@ -238,6 +264,21 @@
 		width: fit-content;
 		margin: auto;
 		background: var(--highlight);
+	}
+	p#time {
+		text-align: right;
+		margin-right: 20vw;;
+	}
+
+	@media (min-width: 996px) {
+		p#time {
+			margin-right: 0;
+		}
+	}
+	
+	p#time span {
+		letter-spacing: .2rem;
+		font-family: monospace;
 	}
 
 	div.navigation button {

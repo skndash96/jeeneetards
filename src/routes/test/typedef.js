@@ -37,5 +37,6 @@
  @typedef {object} Test
  @property {boolean[]} Test.review
  @property {ResponseSheet} Test.response_sheet
- @property {boolean} practice 
+ @property {boolean} practice
+ @property {number} time
  */
